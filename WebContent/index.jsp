@@ -7,6 +7,6 @@
 <title></title>
 </head>
 <body>
-<a href="admin/login.do">sads</a>
+<a href="admin/adminGo.do">sads</a>
 </body>
 </html>

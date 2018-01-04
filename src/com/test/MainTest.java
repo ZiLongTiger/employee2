@@ -32,6 +32,11 @@ public class MainTest {
 	}
 	
 	@Test
+	public void getPostionById() {
+		System.out.println(postionMapper.getById(1));
+	}
+	
+	@Test
 	public void getAllDep() {
 		System.out.println(departmentMapper.getAllDepartment());
 	}

@@ -1,7 +1,7 @@
 @charset "utf-8";
 
 #main {
-	width: 1000px;
+	width: 100%;
 	margin: auto;
 	background-image: url(../images/login.png);
 	background-repeat: no-repeat;

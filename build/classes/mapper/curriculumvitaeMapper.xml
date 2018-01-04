@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zy.employee.dao.CurriculumvitaeMapper">
+	
+	<select id="getByUid" resultMap="resultMapDepartment">
+		select * from curriculumvitae;
+	</select>
+	
+	<resultMap type="Department" id="resultMapDepartment">
+		<id property="id" column="id"/>
+		<result property="depLock" column="dep_lock"/>
+		<result property="depName" column="dep_name"/>
+		<result property="baseWage" column="base_wage"/>
+	</resultMap>
+	
+	<select id="getByDepId" resultMap="resultMapDepartment">
+		select * from department where id=#{id};
+	</select>
+	
+	<insert id="insertDepartment">
+		insert into `department`(`id`,`dep_lock`,`dep_name`,`base_wage`) 
+		values ( NULL,#{depLock},#{depName},#{baseWage});
+	</insert>
+	
+	<update id="updateDepartment">
+		update `department`
+		<set>
+			<if test="depLock != null and depLock !=''">
+				`dep_lock`= #{depLock},
+			</if>
+			
+			<if test="depName != null and depName !=''">
+				`dep_name`= #{depName},
+			</if>
+			
+			<if test="baseWage != null and baseWage !=''">
+				`base_wage`= #{baseWage},
+			</if>
+		</set>
+		 where `id`=#{id};
+	</update>
+</mapper>

@@ -11,4 +11,6 @@ public interface PostionMapper {
 	public int updatePostion(Postion postion);
 	
 	public List<Postion> getByDepId(int depId);
+	
+	public Postion getById(int id);
 }

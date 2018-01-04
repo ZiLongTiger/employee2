@@ -3,11 +3,40 @@
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.zy.employee.dao.PostionMapper">
-	<select id="getByDepId" resultType="Postion">
-		select * from postion where dep_id=#{id};
+	
+	<select id="getByDepId" resultMap="resultMapPostion">
+		select * from postion where dep_id=#{depId};
+	</select>
+	
+	<select id="getById" resultMap="resultMapPostion">
+		select * from postion where id=#{id};
 	</select>
 	
 	<resultMap type="Postion" id="resultMapPostion">
-	
+		<id property="id" column="id"/>
+		<result property="posName" column="pos_name"/>
+		<association property="department" column="dep_id" select="getDepartment"/>
 	</resultMap>
+	
+	<select id="getDepartment" resultType="Department">
+		select * from department where id=#{id}
+	</select>
+	
+	<insert id="insertPostion">
+		insert into `postion`(`pos_name`,`dep_id`) 
+		values (#{postion.posName},#{postion.department.id});
+	</insert>
+	
+	<update id="updatePostion">
+		update `postion`
+		<set>
+		<if test="posName != null posName != ''">
+		`pos_name`=#{posName},
+		</if>
+		<if test="department.id != null and department.id != ''">
+		`dep_id`=#{department.id},
+		</if>
+		</set>
+		 where `id`=#{id};
+	</update>
 </mapper>
