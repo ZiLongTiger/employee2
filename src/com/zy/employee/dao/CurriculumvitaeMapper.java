@@ -12,5 +12,7 @@ public interface CurriculumvitaeMapper {
 	
 	public List<Curriculumvitae> getByUid(int uid);//根据登录的用户导出简历
 	
+	public Curriculumvitae getByTitle(String title);//根据登录的用户导出简历
+	
 	public int deleteCurriculumvitaeById(int id);
 }

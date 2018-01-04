@@ -44,6 +44,20 @@
 		<aop:advisor advice-ref="txAdvice" pointcut-ref="pointcut"/>
 	</aop:config>
 	
+	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">  
+        <property name="messageConverters">  
+            <list>  
+                <bean class="org.springframework.http.converter.StringHttpMessageConverter">  
+                    <property name="supportedMediaTypes">  
+                        <list>  
+                            <value>text/html;charset=UTF-8</value>  
+                        </list>  
+                    </property>  
+                </bean>  
+            </list>  
+        </property>  
+    </bean>  
+	
 	<!--配置SpringMVC -->
 	<!-- 1.开启SpringMVC注解模式 -->
 	<!-- 简化配置： (1)自动注册DefaultAnootationHandlerMapping,AnotationMethodHandlerAdapter 

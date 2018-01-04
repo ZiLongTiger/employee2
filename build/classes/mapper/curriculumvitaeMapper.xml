@@ -4,41 +4,103 @@
 
 <mapper namespace="com.zy.employee.dao.CurriculumvitaeMapper">
 	
-	<select id="getByUid" resultMap="resultMapDepartment">
-		select * from curriculumvitae;
+	<select id="getByUid" resultMap="resultMapCurriculumvitae">
+		select * from curriculumvitae where uid=#{uid};
 	</select>
 	
-	<resultMap type="Department" id="resultMapDepartment">
+	<select id="getByTitle" resultMap="resultMapCurriculumvitae">
+		select * from curriculumvitae where title=#{title};
+	</select>
+	
+	<resultMap type="Curriculumvitae" id="resultMapCurriculumvitae">
 		<id property="id" column="id"/>
-		<result property="depLock" column="dep_lock"/>
-		<result property="depName" column="dep_name"/>
-		<result property="baseWage" column="base_wage"/>
+		<result property="realName" column="realName"/>
+		<result property="gender" column="gender"/>
+		<result property="age" column="age"/>
+		<result property="education" column="education"/>
+		<result property="phone" column="phone"/>
+		<result property="email" column="email"/>
+		<result property="jobPostion" column="job_postion"/>
+		<result property="politics" column="politics"/>
+		<result property="experience" column="experience"/>
+		<result property="expectedSalary" column="expected_salary"/>
+		<result property="hobby" column="hobby"/>
+		<result property="evaluation" column="evaluation"/>
+		<association property="user" column="uid" select="getUser"/>
 	</resultMap>
 	
-	<select id="getByDepId" resultMap="resultMapDepartment">
-		select * from department where id=#{id};
+	<select id="getUser" resultType="User">
+		select * from user where id=#{id}	
 	</select>
 	
-	<insert id="insertDepartment">
-		insert into `department`(`id`,`dep_lock`,`dep_name`,`base_wage`) 
-		values ( NULL,#{depLock},#{depName},#{baseWage});
-	</insert>
-	
-	<update id="updateDepartment">
-		update `department`
+	<update id="updateCurriculumvitae">
+		update `curriculumvitae` 
 		<set>
-			<if test="depLock != null and depLock !=''">
-				`dep_lock`= #{depLock},
+			<if test="realName != null and realName != ''">
+				`realName`=#{realName},
 			</if>
 			
-			<if test="depName != null and depName !=''">
-				`dep_name`= #{depName},
+			<if test="gender != null and gender != ''">
+				`gender`=#{gender},
 			</if>
 			
-			<if test="baseWage != null and baseWage !=''">
-				`base_wage`= #{baseWage},
+			<if test="age != null and age != ''">
+				`age`=#{age},
+			</if>
+			
+			<if test="education != null and education != ''">
+				`education`=#{education},
+			</if>
+		
+			<if test="phone != null and phone != ''">
+				`phone`=#{phone},
+			</if>
+			
+			<if test="email != null and email != ''">
+				`email`=#{email},
+			</if>
+			
+			<if test="jobPostion != null and jobPostion != ''">
+				`job_postion`=#{jobPostion},
+			</if>
+			
+			<if test="politics != null and politics != ''">
+				`politics`=#{politics},
+			</if>
+			
+			<if test="experience != null and experience != ''">
+				`experience`=#{experience},
+			</if>
+			
+			<if test="expectedSalary != null and expectedSalary != ''">
+				`expected_salary`=#{expectedSalary},
+			</if>
+			
+			<if test="hobby != null and hobby != ''">
+				`hobby`=#{hobby},
+			</if>
+			
+			<if test="evaluation != null and evaluation != ''">
+				`evaluation`=#{evaluation},
+			</if>
+			
+			<if test="user.id != null and user.id != ''">
+				`uid`=#{user.id},
+			</if>
+			
+			<if test="title != null and title != ''">
+				`title`=#{title},
 			</if>
 		</set>
 		 where `id`=#{id};
 	</update>
+	
+	<insert id="saveCurriculumvitae">
+		insert into `curriculumvitae`(`id`,`realName`,`gender`,`age`,`education`,`phone`,`email`,`job_postion`,`politics`,`experience`,`expected_salary`,`hobby`,`evaluation`,`uid`,`title`) 
+		values ( NULL,#{realName},#{gender},#{age},#{education},#{phone},#{email},#{jobPostion},#{politics},#{experience},#{expectedSalary},#{hobby},#{evaluation},#{user.id},#{title});
+	</insert>
+	
+	<delete id="deleteCurriculumvitaeById">
+		delete from curriculumvitae where id=#{id};
+	</delete>
 </mapper>

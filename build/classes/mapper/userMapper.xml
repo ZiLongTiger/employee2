@@ -12,4 +12,8 @@
 		insert into `user`(`name`,`password`,`role`,`userLock`) 
 		values (#{name},#{password},#{role},#{userLock});
 	</insert>
+	
+	<select id="getUserById" resultType="User">
+		select * from user where id=#{id};
+	</select>
 </mapper>

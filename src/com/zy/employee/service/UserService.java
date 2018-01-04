@@ -7,4 +7,6 @@ public interface UserService {
 	public User login(String name,String password);
 	
 	public int regiseter(User user);
+	
+	public User getUserById(int id);
 }

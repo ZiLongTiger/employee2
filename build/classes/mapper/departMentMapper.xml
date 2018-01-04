@@ -5,7 +5,7 @@
 <mapper namespace="com.zy.employee.dao.DepartmentMapper">
 	
 	<select id="getAllDepartment" resultMap="resultMapDepartment">
-		select * from department;
+		select * from department where dep_lock = 1;
 	</select>
 	
 	<resultMap type="Department" id="resultMapDepartment">
@@ -16,7 +16,7 @@
 	</resultMap>
 	
 	<select id="getByDepId" resultMap="resultMapDepartment">
-		select * from department where id=#{id};
+		select * from department where id=#{id} and dep_lock = 1;
 	</select>
 	
 	<insert id="insertDepartment">

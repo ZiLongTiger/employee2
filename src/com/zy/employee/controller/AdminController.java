@@ -28,7 +28,7 @@ public class AdminController {
 		String name = req.getParameter("name");
 		String password = req.getParameter("password");
 		User user = userService.login(name, password);
-		if(user != null) {
+		if(user != null && user.getRole() == 1) {
 			return "success";
 		}
 		return "error";

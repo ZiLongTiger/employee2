@@ -9,4 +9,6 @@ public interface UserMapper {
 	public User getUser(@Param(value="name")String name,@Param(value="password")String password);
 	
 	public int insertUser(User user);
+	
+	public User getUserById(int id);
 }

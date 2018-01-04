@@ -22,13 +22,56 @@ public class Curriculumvitae{
 	
 	private String experience;//工作经验
 	
-	private double expectedSalary;//期望薪水
+	private String expectedSalary;//期望薪水
 	
 	private String hobby;//兴趣爱好
 	
 	private String evaluation;//自我评价
 	
 	private User user;//关联的
+	
+	private String title;
+
+	public Curriculumvitae(String realName, String gender, int age, String education, String phone, String email,
+			String jobPostion, String politics, String experience, String expectedSalary, String hobby,
+			String evaluation, User user, String title) {
+		super();
+		this.realName = realName;
+		this.gender = gender;
+		this.age = age;
+		this.education = education;
+		this.phone = phone;
+		this.email = email;
+		this.jobPostion = jobPostion;
+		this.politics = politics;
+		this.experience = experience;
+		this.expectedSalary = expectedSalary;
+		this.hobby = hobby;
+		this.evaluation = evaluation;
+		this.user = user;
+		this.title = title;
+	}
+
+	public Curriculumvitae(int id, String realName, String gender, int age, String education, String phone,
+			String email, String jobPostion, String politics, String experience, String expectedSalary, String hobby,
+			String evaluation, User user, String title) {
+		super();
+		this.id = id;
+		this.realName = realName;
+		this.gender = gender;
+		this.age = age;
+		this.education = education;
+		this.phone = phone;
+		this.email = email;
+		this.jobPostion = jobPostion;
+		this.politics = politics;
+		this.experience = experience;
+		this.expectedSalary = expectedSalary;
+		this.hobby = hobby;
+		this.evaluation = evaluation;
+		this.user = user;
+		this.title = title;
+	}
 
 	public Curriculumvitae() {
 		super();
@@ -114,11 +157,11 @@ public class Curriculumvitae{
 		this.experience = experience;
 	}
 
-	public double getExpectedSalary() {
+	public String getExpectedSalary() {
 		return expectedSalary;
 	}
 
-	public void setExpectedSalary(double expectedSalary) {
+	public void setExpectedSalary(String expectedSalary) {
 		this.expectedSalary = expectedSalary;
 	}
 
@@ -146,11 +189,19 @@ public class Curriculumvitae{
 		this.user = user;
 	}
 
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
 	@Override
 	public String toString() {
 		return "Curriculumvitae [id=" + id + ", realName=" + realName + ", gender=" + gender + ", age=" + age
 				+ ", education=" + education + ", phone=" + phone + ", email=" + email + ", jobPostion=" + jobPostion
 				+ ", politics=" + politics + ", experience=" + experience + ", expectedSalary=" + expectedSalary
-				+ ", hobby=" + hobby + ", evaluation=" + evaluation + ", user=" + user + "]";
+				+ ", hobby=" + hobby + ", evaluation=" + evaluation + ", user=" + user + ", title=" + title + "]";
 	}
 }
