@@ -8,6 +8,10 @@
 		select * from user where name=#{name} and password=#{password};
 	</select>
 	
+	<select id="getUserByName" resultType="User">
+		select * from user where name=#{name};
+	</select>
+	
 	<insert id="insertUser">
 		insert into `user`(`name`,`password`,`role`,`userLock`) 
 		values (#{name},#{password},#{role},#{userLock});

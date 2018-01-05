@@ -27,9 +27,10 @@ login = function(){
 		   type: "POST",
 		   data: {name:txtName,password:txtPwd},
 		   success: function(data){
-			   alert(data);
 			   if(data == "error"){
 				   $("#errorMsg").text("请输入正确的用户名或密码");
+			   }else if(data == "disappear"){
+				   $("#errorMsg").text("无效的账号");
 			   }else if(data == "success"){
 				   window.location = "${pageContext.request.contextPath}/user/goMainPage.do";
 			   }
@@ -44,6 +45,7 @@ login = function(){
     $("#remberPass").attr("checked", true);
     $("#txt_username").val($.cookie("username"));
     $("#txt_password").val($.cookie("password"));
+    
     }
   });
  
@@ -70,7 +72,7 @@ login = function(){
 				<legend>登录</legend>
 				
 				账&nbsp;&nbsp;&nbsp;&nbsp;号：
-				<input type="text" id="txtName" value="请输入用户名" onfocus="if (this.value == '请输入用户名') {this.value = '';this.style.color = 'black';}" onblur="if (this.value == '' || this == 0) {this.style.color = 'gray';this.value = '管理员账号';}" style="width:200px; color:gray; margin:5px 0px;"/>
+				<input type="text" id="txtName" value="请输入用户名" onfocus="if (this.value == '请输入用户名') {this.value = '';this.style.color = 'black';}" onblur="if (this.value == '' || this == 0) {this.style.color = 'gray';this.value = '请输入用户名';}" style="width:200px; color:gray; margin:5px 0px;"/>
 				<br/>  
 				
 				密&nbsp;&nbsp;&nbsp;&nbsp;码：
@@ -84,7 +86,7 @@ login = function(){
 
 				<input type="submit" id="btnLogin" value="登录" style="margin:5px 0px;"/>
 				<br/>
-				如果您还没有账号，请<a href="">立即注册</a>
+				如果您还没有账号，请<a href="${pageContext.request.contextPath}/user/goRegister.do">立即注册</a>
 				<br/>
 				
 				<span id="errorMsg" style="color:red; font-size: 20;"></span>

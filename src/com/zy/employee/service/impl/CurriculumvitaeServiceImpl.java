@@ -35,4 +35,14 @@ public class CurriculumvitaeServiceImpl implements CurriculumvitaeService {
 		return curriculumvitaeMapper.deleteCurriculumvitaeById(id);
 	}
 
+	@Override
+	public Curriculumvitae getByTitle(String title) {
+		return curriculumvitaeMapper.getByTitle(title);
+	}
+
+	@Override
+	public Curriculumvitae getById(int id) {
+		return curriculumvitaeMapper.getById(id);
+	}
+
 }

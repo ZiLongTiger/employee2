@@ -9,4 +9,6 @@ public interface UserService {
 	public int regiseter(User user);
 	
 	public User getUserById(int id);
+	
+	public User getUserByName(String name);
 }

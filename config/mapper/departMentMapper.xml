@@ -19,6 +19,10 @@
 		select * from department where id=#{id} and dep_lock = 1;
 	</select>
 	
+	<select id="getByDepName" resultMap="resultMapDepartment">
+		select * from department where dep_name=#{depName} and dep_lock = 1;
+	</select>
+	
 	<insert id="insertDepartment">
 		insert into `department`(`id`,`dep_lock`,`dep_name`,`base_wage`) 
 		values ( NULL,#{depLock},#{depName},#{baseWage});

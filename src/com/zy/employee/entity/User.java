@@ -10,7 +10,7 @@ public class User{
 	
 	private int role;//0普通用户  1管理员
 	
-	private int userLock;//0 删除  1未删除	
+	private int userLock;//0 未删除  1已删除	
 
 	public User(String name, String password, int role, int userLock) {
 		super();

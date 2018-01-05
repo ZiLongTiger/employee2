@@ -8,6 +8,10 @@
 		select * from curriculumvitae where uid=#{uid};
 	</select>
 	
+	<select id="getById" resultMap="resultMapCurriculumvitae">
+		select * from curriculumvitae where id=#{id};
+	</select>
+	
 	<select id="getByTitle" resultMap="resultMapCurriculumvitae">
 		select * from curriculumvitae where title=#{title};
 	</select>

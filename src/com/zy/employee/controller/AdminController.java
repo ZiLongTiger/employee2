@@ -22,14 +22,18 @@ public class AdminController {
 		return "admin/login";
 	}
 	
+	//管理员登录
 	@RequestMapping("login.do")
 	@ResponseBody
 	public String goAdminLogin(HttpServletRequest req) {
 		String name = req.getParameter("name");
 		String password = req.getParameter("password");
 		User user = userService.login(name, password);
-		if(user != null && user.getRole() == 1) {
+		if(user != null && user.getRole() == 1 && user.getUserLock() == 0) {
+			//判断是不是有效的管理员
 			return "success";
+		}else if(user != null && user.getRole() == 1 && user.getUserLock() == 1) {
+			return "disappear";
 		}
 		return "error";
 	}

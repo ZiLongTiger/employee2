@@ -29,6 +29,8 @@ login = function(){
 		   success: function(data){
 			   if(data == "error"){
 				   $("#errorMsg").text("请输入正确的管理员账号或密码");
+			   }else if(data == "disappear"){
+				   $("#errorMsg").text("无效的管理员账号");
 			   }else if(data == "success"){
 				   window.location = "";
 			   }

@@ -5,6 +5,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>管理员主界面</title>
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/global.css">
 </head>
 <body>
 
