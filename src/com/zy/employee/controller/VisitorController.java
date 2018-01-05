@@ -1,7 +1,9 @@
 package com.zy.employee.controller;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,11 +17,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSON;
 import com.zy.employee.entity.Curriculumvitae;
 import com.zy.employee.entity.Department;
+import com.zy.employee.entity.Offer;
 import com.zy.employee.entity.Postion;
+import com.zy.employee.entity.Recruit;
 import com.zy.employee.entity.User;
 import com.zy.employee.service.CurriculumvitaeService;
 import com.zy.employee.service.DepartmentService;
+import com.zy.employee.service.OfferService;
 import com.zy.employee.service.PostionService;
+import com.zy.employee.service.RecruitService;
 import com.zy.employee.service.UserService;
 
 @Controller("visitorController")
@@ -37,6 +43,12 @@ public class VisitorController {
 	
 	@Autowired
 	private PostionService postionService;
+	
+	@Autowired
+	private RecruitService recruitService;
+	
+	@Autowired
+	private OfferService offerService;
 	
 	private static User login_user = null;
 	//跳转到用户登录界面
@@ -60,10 +72,14 @@ public class VisitorController {
 		if(user != null && user.getRole() == 0 && user.getUserLock() == 0) {
 			login_user = user;
 			return "success";
+		}else if(user != null && user.getRole() == 2 && user.getUserLock() == 0) {
+			login_user = user;
+			return "success2";
 		}else if(user != null && user.getRole() == 0 && user.getUserLock() == 1) {
 			return "disappear";//该用户的状态是删除了的  
+		}else {
+			return "error";
 		}
-		return "error";
 	}
 	//跳转到主页面
 	@RequestMapping("goMainPage.do")
@@ -240,5 +256,56 @@ public class VisitorController {
 		curriculumvitae.setTitle(title);
 		curriculumvitaeService.updateCurriculumvitae(curriculumvitae);
 		return "redirect:goMainPage.do";
+	}
+	//跳转到招聘信息网页
+	@RequestMapping("goRecruid.do")
+	public String goRecruid(Model model) {
+		List<Recruit> listRecruid = recruitService.getAllRecruit();
+		model.addAttribute("user", login_user);
+		model.addAttribute("data", listRecruid);
+		return "recruid/showRecruid";
+	}
+	//根据招聘信息的标题查看并决定是否投递
+	@RequestMapping("queryByRecruidTitle.do")
+	@ResponseBody
+	public String queryByTitleRecruid(HttpServletRequest req) throws IOException {
+		req.setCharacterEncoding("utf-8");
+		String title = req.getParameter("title");
+		List<Recruit> list = new ArrayList<Recruit>();
+		Recruit recruit = recruitService.getByTitle(title);
+		list.add(recruit);
+		Object json = JSON.toJSON(list);
+		return ""+json;
+	}
+	
+	//查看自己的简历
+	@RequestMapping("goShowSelf.do")
+	public String goShowSelfCurriculumvitae(Model model) {
+		System.out.println("showSelf"+login_user);
+		String msg = "go";
+		List<Curriculumvitae> list = curriculumvitaeService.getByUid(login_user.getId());
+		model.addAttribute("SelfCurriculumvitae", list);
+		model.addAttribute("msg", msg);
+		return "User/selfCurriculumvitae";
+	}
+	
+	//投递简历
+	@RequestMapping("sendCurriculumvitae.do")
+	@ResponseBody
+	public String goSendCurriculumvitae(HttpServletRequest req) throws IOException {
+		req.setCharacterEncoding("utf-8");
+		int curId = Integer.valueOf(req.getParameter("id"));
+		System.out.println(curId);
+		Curriculumvitae curr = curriculumvitaeService.getById(curId);
+		Offer offer = offerService.getByuId(curr.getUser().getId());	
+		if(offer != null) {//如果已经投递过来 则不能继续投递
+			return "error1";
+		}
+		String delivery = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+		int res = offerService.insertOffer(new Offer(curId, 0, delivery, 0, null, curr.getUser().getId()));
+		if(res > 0) {
+			return "success";
+		}
+		return "error";
 	}
 }

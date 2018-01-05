@@ -8,7 +8,7 @@ public class User{
 	
 	private String password;
 	
-	private int role;//0普通用户  1管理员
+	private int role;//0普通用户  1管理员 2员工
 	
 	private int userLock;//0 未删除  1已删除	
 

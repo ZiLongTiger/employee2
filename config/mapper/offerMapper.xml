@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zy.employee.dao.OfferMapper">
+	
+	<select id="getAllRecruit" resultType="Recruit" >
+		select * from recruit;
+	</select>
+	
+	<select id="getById" resultType="Offer" >
+		select * from offer where id=#{id};
+	</select>
+	
+	<select id="getByuId" resultType="Offer" >
+		select * from offer where uid=#{uid};
+	</select>
+	
+	<select id="getBycurId" resultType="Offer" >
+		select * from offer where curId=#{curId};
+	</select>
+	
+	<insert id="insertOffer">
+		insert into `offer`(`curId`,`statics`,`delivery`,`interview`,`confirm`,`uid`) 
+		values (#{curId},#{statics},#{delivery},#{interview},#{confirm},#{uid});
+	</insert>
+	
+	<update id="updateRecruit">
+		update `offer`
+		<set>
+			<if test="curId != null and curId !=''">
+				`curId`= #{curId},
+			</if>
+			
+			<if test="statics != null and statics !=''">
+				`statics`= #{statics},
+			</if>
+			
+			<if test="delivery != null and delivery !=''">
+				`delivery`= #{delivery},
+			</if>
+			
+			<if test="interview != null and interview !=''">
+				`interview`= #{interview},
+			</if>
+			
+			<if test="confirm != null and confirm !=''">
+				`confirm`= #{confirm},
+			</if>
+			
+			<if test="uid != null and uid !=''">
+				`title`= #{title},
+			</if>
+		</set>
+		 where `id`=#{id};
+	</update>
+</mapper>

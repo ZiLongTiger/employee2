@@ -9,7 +9,7 @@
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/login.css"><base>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery-1.7.2.js"></script>
-
+<script src="${pageContext.request.contextPath}/js/jquery.cookie.js"></script>
 <script type="text/javascript">
 $(function(){
 	$("#btnLogin").click(login);
@@ -33,38 +33,14 @@ login = function(){
 				   $("#errorMsg").text("无效的账号");
 			   }else if(data == "success"){
 				   window.location = "${pageContext.request.contextPath}/user/goMainPage.do";
+			   }else if(data == "success2"){
+				   window.location = "${pageContext.request.contextPath}/user/goEmployeePage.do";
 			   }
 		   }
 		 });
 }
 </script>
 
-<script type="text/javascript">
-  $(document).ready(function () {
-    if ($.cookie("rmbUser") == "true") {
-    $("#remberPass").attr("checked", true);
-    $("#txt_username").val($.cookie("username"));
-    $("#txt_password").val($.cookie("password"));
-    
-    }
-  });
- 
-  //记住用户名密码
-  function Save() {
-    if ($("#remberPass").attr("checked")) {
-      var str_username = $("#txtName").val();
-      var str_password = $("#txtPwd").val();
-      $.cookie("rmbUser", "true", { expires: 7 }); //存储一个带7天期限的cookie
-      $.cookie("username", str_username, { expires: 7 });
-      $.cookie("password", str_password, { expires: 7 });
-    }
-    else {
-      $.cookie("rmbUser", "false", { expire: -1 });
-      $.cookie("username", "", { expires: -1 });
-      $.cookie("password", "", { expires: -1 });
-    }
-  };
-</script>
 </head>
 <body>
 	<div id="main">
@@ -80,9 +56,9 @@ login = function(){
 				<br/>
 				
 				
-				<input type="checkbox" id="remberPass"  checked="checked" style="margin:5px 0px;"/>
+			<!-- 	<input type="checkbox" id="remberPass"  checked="checked" style="margin:5px 0px;"/>
 				记住密码
-				<br/>
+				<br/> -->
 
 				<input type="submit" id="btnLogin" value="登录" style="margin:5px 0px;"/>
 				<br/>
@@ -91,6 +67,7 @@ login = function(){
 				
 				<span id="errorMsg" style="color:red; font-size: 20;"></span>
 			</fieldset>
-		</div>
+	</div>
+		
 </body>
 </html>

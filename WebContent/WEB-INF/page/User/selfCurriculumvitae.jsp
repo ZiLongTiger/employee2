@@ -35,6 +35,24 @@ $(function(){
 		   }
 		});
 	});
+	
+	
+	$("a[name='send']").click(function(){
+		var req = "${pageContext.request.contextPath}/user/sendCurriculumvitae.do";
+		var id = $(this).prev().val();
+		$.ajax({
+			   type: "POST",
+			   url: req,
+			   data: {id:id},
+			   success: function(msg){
+				 if(msg == "success"){
+					 alert("投递成功");
+				 }else if(msg == "error1"){
+					 alert("你已经投递过了，请不要重复投递");
+				 }
+			   }
+			});
+	});
 });
 </script>
 </head>
@@ -42,11 +60,20 @@ $(function(){
 <c:if test="${empty SelfCurriculumvitae}">
 	<h2>你还没有简历信息，是否<a href="${pageContext.request.contextPath}/user/create.do">立即创建</a></h2>
 </c:if>
-<c:forEach items="${SelfCurriculumvitae}" var="Curriculumvitae">
-	<a name="showSelfCurriculumvitae" href="javascript:void(0)">${Curriculumvitae.title}</a>
-	<br/><br/>
-</c:forEach>
+<div>
 
+	<c:forEach items="${SelfCurriculumvitae}" var="Curriculumvitae">
+		<span>
+			<a name="showSelfCurriculumvitae" href="javascript:void(0)">${Curriculumvitae.title}</a>
+			&nbsp;&nbsp;&nbsp;
+			<c:if test="${msg =='go'}">
+				<input type="hidden" name="id" value="${Curriculumvitae.id}"/>
+				<a href="javascript:void(0)" name="send">投递</a>
+			</c:if>
+		</span>
+		<br/><br/>
+	</c:forEach>
+</div>
 <div id="show">
 </div>
 </body>

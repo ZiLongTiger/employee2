@@ -7,6 +7,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.zy.employee.dao.CurriculumvitaeMapper;
+import com.zy.employee.dao.RecruitMapper;
 
 
 //Æô¶¯Ê±¼ÓÔØSpringIOCÈÝÆ÷
@@ -18,8 +19,16 @@ public class MainTest2 {
 	@Autowired
 	private CurriculumvitaeMapper CurriculumvitaeMapper;
 	
+	@Autowired
+	private RecruitMapper recruitMapper;
+	
 	@Test
 	public void testQueryByUid() {
 		System.out.println(CurriculumvitaeMapper.getByUid(1));
+	}
+	
+	@Test
+	public void testQueryAll() {
+		System.out.println(recruitMapper.getAllRecruit());
 	}
 }

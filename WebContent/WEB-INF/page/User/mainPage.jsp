@@ -10,6 +10,6 @@
 <body>
 <a href="${pageContext.request.contextPath}/user/create.do">创建简历</a>
 <a href="${pageContext.request.contextPath}/user/showSelf.do">查看个人简历</a>
-<a href="${pageContext.request.contextPath}/user/create.do">查看招聘信息</a>
+<a href="${pageContext.request.contextPath}/user/goRecruid.do">查看招聘信息</a>
 </body>
 </html>
