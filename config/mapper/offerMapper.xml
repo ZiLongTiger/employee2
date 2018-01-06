@@ -4,8 +4,8 @@
 
 <mapper namespace="com.zy.employee.dao.OfferMapper">
 	
-	<select id="getAllRecruit" resultType="Recruit" >
-		select * from recruit;
+	<select id="getAllOffer" resultType="Offer" >
+		select * from offer where interview = 0;
 	</select>
 	
 	<select id="getById" resultType="Offer" >
@@ -25,7 +25,7 @@
 		values (#{curId},#{statics},#{delivery},#{interview},#{confirm},#{uid});
 	</insert>
 	
-	<update id="updateRecruit">
+	<update id="updateOffer">
 		update `offer`
 		<set>
 			<if test="curId != null and curId !=''">
@@ -49,7 +49,7 @@
 			</if>
 			
 			<if test="uid != null and uid !=''">
-				`title`= #{title},
+				`uid`= #{uid},
 			</if>
 		</set>
 		 where `id`=#{id};

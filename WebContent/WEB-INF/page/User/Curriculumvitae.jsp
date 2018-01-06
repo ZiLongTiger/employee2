@@ -75,6 +75,7 @@ $(function(){
 </script>
 </head>
 <body>
+<%@ include file="head.jsp" %>
 <c:if test="${msg =='create'}">
 <div id="frm1">
 	<form action="${pageContext.request.contextPath}/user/saveCurriculumvitae.do" method="post">
@@ -179,7 +180,7 @@ $(function(){
 		<table border="1px" cellpadding="5px" cellspacing="0px" width="600px" align="center">
 			<caption>
 				<h2>修改简历</h2>
-				title：<input type="text" name="title" value="${curriculumvitae.title}"/><br/><br/>
+				title：<input type="text" name="title" value="${curriculumvitae.title}" readonly="readonly"/><br/><br/>
 				<span id="errorMsg" style="color:red; font-size: 20;"></span>
 			</caption>
 			<tr>
@@ -282,5 +283,6 @@ $(function(){
 	</form>
 	</div>
 </c:if>	
+<%@ include file="foot.jsp" %>
 </body>
 </html>

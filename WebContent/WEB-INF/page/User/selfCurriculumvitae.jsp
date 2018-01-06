@@ -9,6 +9,7 @@
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/global.css">
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/head.css">
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/footer.css">
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/selfCrr.css">
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery-1.7.2.js"></script>
 <script type="text/javascript">

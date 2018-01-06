@@ -7,6 +7,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.zy.employee.dao.CurriculumvitaeMapper;
+import com.zy.employee.dao.OfferMapper;
 import com.zy.employee.dao.RecruitMapper;
 
 
@@ -22,6 +23,10 @@ public class MainTest2 {
 	@Autowired
 	private RecruitMapper recruitMapper;
 	
+	@Autowired
+	private OfferMapper offerMapper;
+	
+	
 	@Test
 	public void testQueryByUid() {
 		System.out.println(CurriculumvitaeMapper.getByUid(1));
@@ -30,5 +35,10 @@ public class MainTest2 {
 	@Test
 	public void testQueryAll() {
 		System.out.println(recruitMapper.getAllRecruit());
+	}
+	
+	@Test
+	public void testQueryOffer() {
+		System.out.println(offerMapper.getAllOffer());
 	}
 }

@@ -5,11 +5,11 @@ public class Offer{
 	
 	private int curId;//简历id
 	
-	private int statics;//0表示改简历已查看  1表示未查看
+	private int statics;//0表示改简历未查看  1表示已查看
 	
 	private String delivery;//投递时间
 	
-	private int interview;//1表示面试通过   2面试失败
+	private int interview;//0表示未面试 1表示面试通过   2面试失败 3简历看不过去
 	
 	private String confirm;//通知其面试时间
 	

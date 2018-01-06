@@ -23,11 +23,10 @@ $(function(){
 		   data: {title:title},
 		   dataType:"json",
 		   success: function(msg){
-			  
 			   show.html("<table border='0px' cellpadding='5px' cellspacing='0px' width='600px' align='center'><tr>"+
 					   "<td>公司介绍：<br/>"+msg[0].companyDescription+"</td><tr><td>岗位要求：<br/>"+msg[0].jobReq+"</td><tr><td>工作时间：<br/>"+msg[0].workHours
 					   +"</td><tr><td>福利待遇：<br/>"+msg[0].benefits+"</td><tr><td>公司地址及电话：<br/>"+msg[0].address+"<br/><br/>"+msg[0].tel+
-					   "</td><tr><td><a href='${pageContext.request.contextPath}/user/goShowSelf.do'>投递简历</a></td><tr></tr></table>");
+					   "</td><tr><td><a href='${pageContext.request.contextPath}/admin/querySingleRecruit.do?id="+msg[0].id+"'>修改招聘信息</a></td><tr></tr></table>");
 		   }
 		});
 	});
@@ -41,6 +40,8 @@ $(function(){
 <div id="main">
 	<c:forEach items="${data}" var="recruid">
 		<a name="showRecruid" href="javascript:void(0)">${recruid.title}</a>
+		&nbsp;&nbsp;&nbsp;
+		<a name="showRecruid" href="${pageContext.request.contextPath}/admin/deleteRecruid.do?id=${recruid.id}">删除</a>
 		<br/><br/>
 	</c:forEach>
 </div>

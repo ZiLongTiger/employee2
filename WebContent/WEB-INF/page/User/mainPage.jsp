@@ -16,9 +16,8 @@
 <a href="${pageContext.request.contextPath}/user/create.do">创建简历</a>&nbsp;&nbsp;&nbsp;
 <a href="${pageContext.request.contextPath}/user/showSelf.do">查看个人简历</a>&nbsp;&nbsp;&nbsp;
 <a href="${pageContext.request.contextPath}/user/goRecruid.do">查看招聘信息</a>
-
-<div>
-	<img/>
+<div id="bg">
+	<img alt="背景" src="${pageContext.request.contextPath}/images/bg.jpg" style="width:1000px;heigth:400px">
 </div>
 </div>
 <%@ include file="foot.jsp" %>

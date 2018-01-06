@@ -1,5 +1,7 @@
 package com.zy.employee.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,5 +38,15 @@ public class OfferServiceImpl implements OfferService {
 	@Override
 	public Offer getByuId(int uid) {
 		return offerMapper.getByuId(uid);
+	}
+
+	@Override
+	public List<Offer> getAllOffer() {
+		return offerMapper.getAllOffer();
+	}
+
+	@Override
+	public int deleteOffer(int id) {
+		return offerMapper.deleteOffer(id);
 	}
 }

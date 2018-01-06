@@ -1,0 +1,18 @@
+﻿@charset "utf-8";
+
+#text{
+	margin-left: 180px;
+	font-size: 20px;
+}
+
+#showOne{
+	margin-left: 180px;
+	font-size: 20px;
+	float: left;
+}
+
+#show{
+	margin-left: 80px;
+	float: left;
+	font-size: 18px;
+}

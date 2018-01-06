@@ -10,7 +10,7 @@
 			   dataType:"json",
 			   success: function(returnData){
 				   if(returnData != "false"){
-					   var msg = "欢迎您：" + returnData[0].name + " " + (returnData[0].role == 0 ? "用户" : returnData[0].role == 1 ?"管理员 ":"y工");
+					   var msg = "欢迎您：" + returnData[0].name + " " + (returnData[0].role == 0 ? "用户" : returnData[0].role == 1 ?"管理员 ":"员工");
 						
 						$("#spLoginMsg").text(msg);
 						$("#divLoginT").show();
@@ -45,7 +45,7 @@
 		        
 		        <span>|</span>
 				
-		        <a href="memberCenter.jsp">用户中心</a>
+		        <a href="javascript:void(0)">用户中心</a>
 			</div>
 	        
 	        <span>|</span>
@@ -63,7 +63,7 @@
 	</div>
 
 	<div id="header_bottommenu">
-		<a href="">首页</a>
+		<a href="${pageContext.request.contextPath}/admin/goMainPage.do">首页</a>
 		
 		<span>|</span>
 		

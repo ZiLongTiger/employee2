@@ -45,7 +45,7 @@
 		        
 		        <span>|</span>
 				
-		        <a href="memberCenter.jsp">用户中心</a>
+		        <a href="javascript:void(0)">用户中心</a>
 			</div>
 	        
 	        <span>|</span>
@@ -63,7 +63,7 @@
 	</div>
 
 	<div id="header_bottommenu">
-		<a href="">首页</a>
+		<a href="${pageContext.request.contextPath}/user/goMainPage.do">首页</a>
 		
 		<span>|</span>
 		
