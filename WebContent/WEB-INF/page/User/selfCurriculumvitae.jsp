@@ -7,6 +7,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>自己的简历</title>
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/global.css">
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/head.css">
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/footer.css">
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery-1.7.2.js"></script>
 <script type="text/javascript">
@@ -57,10 +59,11 @@ $(function(){
 </script>
 </head>
 <body>
+<%@ include file="head.jsp" %>
 <c:if test="${empty SelfCurriculumvitae}">
 	<h2>你还没有简历信息，是否<a href="${pageContext.request.contextPath}/user/create.do">立即创建</a></h2>
 </c:if>
-<div>
+<div id="main">
 
 	<c:forEach items="${SelfCurriculumvitae}" var="Curriculumvitae">
 		<span>
@@ -76,5 +79,6 @@ $(function(){
 </div>
 <div id="show">
 </div>
+<%@ include file="foot.jsp" %>
 </body>
 </html>

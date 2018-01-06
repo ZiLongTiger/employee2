@@ -8,6 +8,6 @@
 </head>
 <body>
 <a href="admin/adminGo.do">管理员登录</a>
-<a href="user/userGo.do">用户登录</a>
+<a href="${pageContext.request.contextPath}/user/userGo.do">用户登录</a>
 </body>
 </html>

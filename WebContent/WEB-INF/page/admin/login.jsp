@@ -6,7 +6,9 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Insert title here</title>
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/global.css">
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/login.css"><base>
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/login.css">
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/head.css">
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/footer.css">
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery-1.7.2.js"></script>
 <script src="${pageContext.request.contextPath}/js/jquery.cookie.js"></script>
@@ -67,6 +69,7 @@ login = function(){
 </script> -->
 </head>
 <body>
+<%@ include file="head.jsp" %>
 	<div id="main">
 			<fieldset style="width:280px; float:right; margin-right:50px;">
 				<legend>登录</legend>
@@ -91,5 +94,6 @@ login = function(){
 				<span id="errorMsg" style="color:red; font-size: 20;"></span>
 			</fieldset>
 		</div>
+	<%@ include file="foot.jsp" %>		
 </body>
 </html>

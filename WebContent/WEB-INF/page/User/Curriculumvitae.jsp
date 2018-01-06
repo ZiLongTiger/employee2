@@ -7,6 +7,9 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>简历</title>
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/global.css">
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/head.css">
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/footer.css">
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/Curriculumvitae.css">
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery-1.7.2.js"></script>
 <script type="text/javascript">
@@ -73,7 +76,8 @@ $(function(){
 </head>
 <body>
 <c:if test="${msg =='create'}">
-<form action="${pageContext.request.contextPath}/user/saveCurriculumvitae.do" method="post">
+<div id="frm1">
+	<form action="${pageContext.request.contextPath}/user/saveCurriculumvitae.do" method="post">
 		<input type="hidden" value="${request.user.id}" name="userId"/>
 		<table border="0px" cellpadding="5px" cellspacing="0px" width="600px" align="center">
 			<caption>
@@ -165,10 +169,12 @@ $(function(){
 				</td>
 			</tr>
 		</table>
-</form>		
+</form>	
+</div>	
 </c:if>	
 
 <c:if test="${msg =='update'}">
+	<div id="frm">
 	<form action="${pageContext.request.contextPath}/user/updateCurriculumvitae.do" method="post">
 		<table border="1px" cellpadding="5px" cellspacing="0px" width="600px" align="center">
 			<caption>
@@ -274,6 +280,7 @@ $(function(){
 			</tr>
 		</table>
 	</form>
+	</div>
 </c:if>	
 </body>
 </html>

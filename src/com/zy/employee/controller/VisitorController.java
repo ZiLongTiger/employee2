@@ -51,6 +51,20 @@ public class VisitorController {
 	private OfferService offerService;
 	
 	private static User login_user = null;
+	
+	@RequestMapping("checkLogin.do")
+	@ResponseBody
+	public String checkLogin(Model model) {
+		if(login_user != null) {
+			List<User>list = new ArrayList<User>();
+			System.out.println(login_user);
+			list.add(login_user);
+			Object json = JSON.toJSON(list);
+			return ""+json;
+		}
+		return "false";
+	}
+	
 	//跳转到用户登录界面
 	@RequestMapping("userGo.do")
 	public String goUserLogin() {
@@ -71,6 +85,7 @@ public class VisitorController {
 		User user = userService.login(name, password);
 		if(user != null && user.getRole() == 0 && user.getUserLock() == 0) {
 			login_user = user;
+			System.out.println("success");
 			return "success";
 		}else if(user != null && user.getRole() == 2 && user.getUserLock() == 0) {
 			login_user = user;

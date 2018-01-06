@@ -7,6 +7,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>招聘信息</title>
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/global.css">
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/login.css">
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/head.css">
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery-1.7.2.js"></script>
 <script type="text/javascript">
 $(function(){

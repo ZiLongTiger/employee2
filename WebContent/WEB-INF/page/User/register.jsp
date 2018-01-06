@@ -6,6 +6,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>注册界面</title>
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/global.css">
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/head.css">
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/footer.css">
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery-1.7.2.js"></script>
 <script type="text/javascript">
@@ -70,6 +72,7 @@ checkedRegister = function(){
 			   $("#errorMsg").text("注册失败");
 			   return;
 		   }else{
+			   alert("注册成功");
 			   window.location = "${pageContext.request.contextPath}/user/userGo.do";
 		   }
 	    }
@@ -79,6 +82,7 @@ checkedRegister = function(){
 </script>
 </head>
 <body>
+<%@ include file="head.jsp" %>
 		<table cellpadding="5px" cellspacing="0px" align="center">
 			<tr>
 				<td align="right">请输入用户名：</td>
@@ -106,5 +110,6 @@ checkedRegister = function(){
 				</td>
 			</tr>
 		</table>
+<%@ include file="foot.jsp" %>
 </body>
 </html>
