@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zy.employee.dao.SalaryMapper">
+	
+	<select id="getAllSalary" resultType="Salary" >
+		select * from salary;
+	</select>
+	
+	<select id="getSalaryByMonth" resultType="Salary" >
+		select * from salary where month=#{month};
+	</select>
+	
+	<select id="getSalaryByMonthAndUid" resultType="Salary" >
+		select * from salary where month=#{month} and uid=#{uid};
+	</select>
+	
+	
+	<insert id="insertSalary">
+		insert into `salary`(`late`,`evection`,`bonusId`,`early`,`absenteeism`,`uid`,`total`,`baseWage`,`month`) 
+		values (#{late},#{evection},#{bonusId},#{early},#{absenteeism},#{uid},#{total},#{baseWage},#{month});
+	</insert>
+	
+	<update id="updateSalary">
+		update `salary`
+		<set>
+			<if test="late != null and late !=''">
+				`late`= #{late},
+			</if>
+			
+			<if test="evection != null and evection !=''">
+				`evection`= #{evection},
+			</if>
+			
+			<if test="bonusId != null and bonusId !=''">
+				`bonusId`= #{bonusId},
+			</if>
+			
+			<if test="early != null and early !=''">
+				`early`= #{early},
+			</if>
+			
+			<if test="absenteeism != null and absenteeism !=''">
+				`absenteeism`= #{absenteeism},
+			</if>
+			
+			<if test="uid != null and uid !=''">
+				`uid`= #{uid},
+			</if>
+			
+			<if test="total != null and total !=''">
+				`total`= #{total},
+			</if>
+			
+			<if test="baseWage != null and baseWage !=''">
+				`baseWage`= #{baseWage},
+			</if>
+			
+			<if test="month != null and month !=''">
+				`month`= #{month},
+			</if>
+		</set>
+		 where `id`=#{id};
+	</update>
+</mapper>

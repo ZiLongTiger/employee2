@@ -24,13 +24,13 @@
 	
 	<insert id="insertPostion">
 		insert into `postion`(`pos_name`,`dep_id`) 
-		values (#{postion.posName},#{postion.department.id});
+		values (#{posName},#{department.id});
 	</insert>
 	
 	<update id="updatePostion">
 		update `postion`
 		<set>
-		<if test="posName != null posName != ''">
+		<if test="posName != null and posName != ''">
 		`pos_name`=#{posName},
 		</if>
 		<if test="department.id != null and department.id != ''">
@@ -39,4 +39,8 @@
 		</set>
 		 where `id`=#{id};
 	</update>
+	
+	<delete id="deleteById">
+		delete from postion where id=#{id};
+	</delete>
 </mapper>

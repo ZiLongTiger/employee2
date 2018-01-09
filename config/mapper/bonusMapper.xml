@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zy.employee.dao.BonusMapper">
+	
+	<select id="getAllBonus" resultType="Bonus" >
+		select * from bonus;
+	</select>
+	
+	<select id="getByBonusId" resultType="Bonus" >
+		select * from bonus where id=#{id};
+	</select>
+	
+	<select id="getByBonusUid" resultType="Offer" >
+		select * from bonus where uid=#{uid}  where deletestatus=0;
+	</select>
+	
+	<insert id="saveBonus">
+		insert into `bonus`(`bonus`,`createTime`,`introduce`,`reward`,`uid`,`deletestatus`)
+		values (#{bonus},#{createTime},#{introduce},#{reward},#{uid},#{deletestatus});
+	</insert>
+	
+	<update id="updateOffer">
+		update `bonus`
+		<set>
+			<if test="bonus != null and bonus !=''">
+				`bonus`= #{bonus},
+			</if>
+			
+			<if test="createTime != null and createTime !=''">
+				`createTime`= #{createTime},
+			</if>
+			
+			<if test="introduce != null and introduce !=''">
+				`introduce`= #{introduce},
+			</if>
+			
+			<if test="interview != null and interview !=''">
+				`interview`= #{interview},
+			</if>
+			
+			<if test="reward != null and reward !=''">
+				`reward`= #{reward},
+			</if>
+			
+			<if test="uid != null and uid !=''">
+				`uid`= #{uid},
+			</if>
+			
+			<if test="deletestatus != null and deletestatus !=''">
+				`deletestatus`= #{deletestatus},
+			</if>
+		</set>
+		 where `id`=#{id};
+	</update>
+</mapper>

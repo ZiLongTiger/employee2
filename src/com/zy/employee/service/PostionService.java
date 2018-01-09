@@ -13,4 +13,6 @@ public interface PostionService {
 	public List<Postion> getByDepId(int depId);
 	
 	public Postion getById(int id);
+	
+	public int deleteById(int id);
 }

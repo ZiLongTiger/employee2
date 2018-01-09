@@ -9,6 +9,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.zy.employee.dao.DepartmentMapper;
 import com.zy.employee.dao.PostionMapper;
 import com.zy.employee.dao.UserMapper;
+import com.zy.employee.entity.Department;
 import com.zy.employee.entity.User;
 
 //启动时加载SpringIOC容器
@@ -42,7 +43,13 @@ public class MainTest {
 	}
 	@Test
 	public void queryDepById() {
-		System.out.println(departmentMapper.getByDepId(1));
+		Department dep = departmentMapper.getByDepId(7);
+		dep.setDepLock(0);
+		dep.setDepName("赖皮部");
+		System.out.println(dep);
+		int update = departmentMapper.updateDepartment(dep);
+		System.out.println(departmentMapper.getByDepId(7));
+		
 	}
 	
 	@Test

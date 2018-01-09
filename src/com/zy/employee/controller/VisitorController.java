@@ -323,4 +323,27 @@ public class VisitorController {
 		}
 		return "error";
 	}
+	
+	//检查是否有面试通知
+	@RequestMapping("checkMessage.do")
+	@ResponseBody
+	public String cheackMessage() {
+		Offer offer = offerService.getByuId(login_user.getId());
+		if(offer.getConfirm() != null || offer.getConfirm() != "") {
+			return "success";
+		}
+		return "error";
+	}
+	//查看面试消息
+	@RequestMapping("message.do")
+	@ResponseBody
+	public String message() {
+		Offer offer = offerService.getByuId(login_user.getId());
+		List<Offer>list = new ArrayList<Offer>();
+		list.add(offer);
+		Object json = JSON.toJSON(list);
+		return ""+json;
+		
+		
+	}
 }

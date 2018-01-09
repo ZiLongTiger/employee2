@@ -34,4 +34,9 @@ public class PostionServiceImpl implements PostionService {
 	public Postion getById(int id) {
 		return postionMapper.getById(id);
 	}
+
+	@Override
+	public int deleteById(int id) {
+		return postionMapper.deleteById(id);
+	}
 }

@@ -16,11 +16,11 @@
 	</resultMap>
 	
 	<select id="getByDepId" resultMap="resultMapDepartment">
-		select * from department where id=#{id} and dep_lock = 1;
+		select * from department where id=#{id};
 	</select>
 	
 	<select id="getByDepName" resultMap="resultMapDepartment">
-		select * from department where dep_name=#{depName} and dep_lock = 1;
+		select * from department where dep_name=#{depName};
 	</select>
 	
 	<insert id="insertDepartment">
@@ -31,9 +31,7 @@
 	<update id="updateDepartment">
 		update `department`
 		<set>
-			<if test="depLock != null and depLock !=''">
-				`dep_lock`= #{depLock},
-			</if>
+			`dep_lock`= #{depLock},
 			
 			<if test="depName != null and depName !=''">
 				`dep_name`= #{depName},
@@ -45,4 +43,8 @@
 		</set>
 		 where `id`=#{id};
 	</update>
+	
+	<delete id="deleteDepartment">
+		delete from department where id=#{id};
+	</delete>
 </mapper>

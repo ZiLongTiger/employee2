@@ -17,6 +17,7 @@ $(function(){
 	$("a[name='showDept']").click(function(){
 		$("#divTable").hide();
 		$("#showCurr").empty();
+		$("#mianshi").empty();
 		var depName = $(this).text();
 		var url = "${pageContext.request.contextPath}/admin/showDepartMent.do";
 		$.ajax({
@@ -28,12 +29,13 @@ $(function(){
 			     show.empty();
 			     show.append("部门：<br/>");
 			   	 for(var i=0;i<msg.length;i++){
-			   		show.append("<a href='javascript:void(0)' name='showPostion'>"+msg[i].depName+"</a>&nbsp;&nbsp;&nbsp;"
-			   		+"<a href='javascript:void(0)' name='delete'>解散部门</a>&nbsp;&nbsp;&nbsp;<a href=>修改部门</a><br/><br/>");
+			   		show.append("<span><input type='hidden' value='"+msg[i].id+"'><a href='javascript:void(0)' name='showPostion'>"+msg[i].depName+"</a>&nbsp;&nbsp;&nbsp;"
+			   		+"<a href='javascript:void(0)' name='delete'>解散部门</a>&nbsp;&nbsp;&nbsp;<a href='${pageContext.request.contextPath}/admin/queruyDeptById.do?id="+msg[i].id+"'>修改部门</a><span><br/><br/>");
 			   	 }
 			   	 
 			   	$("a[name='showPostion']").click(function(){
 					var depName = $(this).text();
+					var id = $(this).prev().val();
 					var url = "${pageContext.request.contextPath}/admin/showPostion.do";
 					$.ajax({
 						   type: "POST",
@@ -41,32 +43,71 @@ $(function(){
 						   data:{depName:depName},
 						   dataType:"json",
 						   success: function(msg){
-						     var show = $("#show");
-						     show.empty();
-						     show.append("职位：<br/>");
-						   	 for(var i=0;i<msg.length;i++){
-						   		show.append("<a href='javascript:void(0)' name='showEmployee'>"+msg[i].posName+"</a><br/><br/>");
-						   	 }
+							 if(msg.length>0){
+								 var show = $("#show");
+							     show.empty();
+							     show.append("职位：<br/>");
+							   	 for(var i=0;i<msg.length;i++){
+							   		show.append("<span><a href='javascript:void(0)' name='showEmployee'>"+msg[i].posName+"</a>&nbsp;&nbsp;<a href='${pageContext.request.contextPath}/admin/goSavePostion.do?depId="+msg[i].department.id+"'>新增职位</a>"
+							   		+"&nbsp;&nbsp;<a href='${pageContext.request.contextPath}/admin/querySingle.do?posId="+msg[i].id+"&depId="+msg[i].department.id+"'>修改职位</a>&nbsp;&nbsp;<input type='hidden' value='"+msg[i].id+"'/><a name='delpostion'>删除职位</a><br/><br/><span>");
+							   	 }
+							   	$("a[name='delpostion']").click(function(){ 
+							   		var posName = $(this).prev().prev().prev().prev().text();
+							   		var id = $(this).prev().val();
+							   		var url="${pageContext.request.contextPath}/admin/delPostion.do";
+							   		var span = $(this).parent();
+							   		if(confirm("你确定删除职位"+posName+"吗？")){
+							   			$.ajax({
+											   type: "POST",
+											   url: url,
+											   data:{id:id},
+											   dataType:"text",
+											   success:function(msg){
+												   if(msg == "success"){
+													   span.remove();
+													   alert("删除成功");
+													}else{
+														alert("删除失败");
+													}
+											   }
+							   			});
+							   		}
+							   		return false;
+							   	});
+							   	 
+							 }else{
+								 var show = $("#show");
+								 show.empty();
+							     show.append("<br/>这是一个新的部门，<br/>还没有安排职位信息<br/>，是否<a href='${pageContext.request.contextPath}/admin/goSavePostion.do?depId="+id+"'>新增职位</a>信息");
+							 }
+						   
 						   }
 						});
 				});
 			   	
 			   	$("a[name='delete']").click(function(){
-					var depName = $(this).text();
-					var url = "${pageContext.request.contextPath}/admin/deleteDept.do";
-					$.ajax({
-						   type: "POST",
-						   url: url,
-						   dataType:"json",
-						   success: function(msg){
-						     var show = $("#show");
-						     show.empty();
-						     show.append("职位：<br/>");
-						   	 for(var i=0;i<msg.length;i++){
-						   		show.append("<a href='javascript:void(0)' name='showEmployee'>"+msg[i].posName+"</a><br/><br/>");
-						   	 }
-						   }
-						});
+					var depName = $(this).prev().text();
+					var span = $(this).parent();
+					if(confirm("你确定解散部门"+depName+"吗？")){
+						var url = "${pageContext.request.contextPath}/admin/deleteDept.do";
+						$.ajax({
+							   type: "POST",
+							   url: url,
+							   data:{depName:depName},
+							   dataType:"text",
+							   success: function(msg){
+								   if(msg == "success"){
+									   span.remove();
+									   alert(depName + "已解散");
+								   }else{
+									   alert(depName + "还不能解散");
+								   }
+								   
+							   }
+							});
+					}
+					return false;
+					
 				});
 			   }
 			});
@@ -76,6 +117,7 @@ $(function(){
 		$("#show").empty();
 		$("#showOne").empty();
 		$("#showCurr").empty();
+		$("#mianshi").empty();
 		var url = "${pageContext.request.contextPath}/admin/showOffer.do";
 		$.ajax({
 		   type: "POST",
@@ -91,6 +133,7 @@ $(function(){
 				 var cid = this.curId;
 				 var uid = this.uid; //面试者
 				 var delivery = this.delivery;//投递时间
+				 var confirm = this.confirm;//面试时间
 				 var statics = (this.statics==0?"未查看":"已查看");//简历是否被查看
 			     var interview = (this.interview==0?"未面试":this.interview==1 ? "面试通过":"面试失败");//面试状态
 				 var tds = [];
@@ -98,7 +141,7 @@ $(function(){
 				 tds.push("<td>" + delivery + "</td>");
 				 tds.push("<td>" + statics + "</td>");
 				 tds.push("<td>" + interview + "</td>");
-				 tds.push("<td><input type='hidden' value='"+id+"'/><input type='hidden' value='"+cid+"'/><a name='showCrues'>查看</a>&nbsp;&nbsp;&nbsp;<a name='deleteCrue'>删除</a></td>");
+				 tds.push("<td><input type='hidden' value='"+confirm+"'/><input type='hidden' value='"+id+"'/><input type='hidden' value='"+cid+"'/><a name='showCrues'>查看</a>&nbsp;&nbsp;&nbsp;<a name='deleteCrue'>删除</a></td>");
 				 var tr = "<tr>" + tds.join("") + "</tr>";
 				 trs.push(tr);
 			 });
@@ -106,29 +149,34 @@ $(function(){
 		     $("table").append(trs.join(""));
 		     
 		    $("a[name='deleteCrue']").click(function(){
-		    	var offerId = $(this).prev().prev().prev().val();
-		    	var tr = $(this).parent().parent();
-		    	 $.ajax({
-		    	  type: "POST",
-		    	  url: "${pageContext.request.contextPath}/admin/deleteOffer.do",
-		    	  data: {offerId:offerId},
-		    	  success:function(data){
-		    		  if(data == "success"){
-		    			  alert("删除成功");
-		    			  tr.remove();
-		    		  }else{
-		    			  alert("删除失败");
-		    		  }
-		    	  }
-		    	});
+		    	if(confirm("你确定删除这条应聘消息吗？")){
+			    	var offerId = $(this).prev().prev().prev().val();
+			    	var tr = $(this).parent().parent();
+			    	 $.ajax({
+			    	  type: "POST",
+			    	  url: "${pageContext.request.contextPath}/admin/deleteOffer.do",
+			    	  data: {offerId:offerId},
+			    	  success:function(data){
+			    		  if(data == "success"){
+			    			  alert("删除成功");
+			    			  tr.remove();
+			    		  }else{
+			    			  alert("删除失败");
+			    		  }
+			    	  }
+			    	});
+		    	 }
+		    	return false;
 		    });
+		   
 		     
 		     $("a[name='showCrues']").click(function(){
 		    	$("#divTable").hide();
 		 		var url = "${pageContext.request.contextPath}/admin/queryCurrById.do";
 		 		var id = $(this).prev().val();
 		 		var offerId = $(this).prev().prev().val();
-		 		
+		 		var interview = $(this).parent().prev().text();
+		 		var confirm = $(this).prev().prev().prev().val();
 		 		var show = $("#showCurr");
 		 		$.ajax({
 		 		   type: "POST",
@@ -148,6 +196,44 @@ $(function(){
 		 						"<td>"+msg[0].experience+"</td></tr><tr><td align='right'>期望薪资</td><td colspan='3'>"+msg[0].expectedSalary+"</td>"+
 		 						"</tr><tr><td align='right' valign='middle'>自我描述</td><td colspan='3'>"+
 		 						 msg[0].evaluation+ "</td></tr><tr><td colspan='4' align='center'><a name='mesg'>通知其面试</a></td></tr></table>");
+		 		   		$("a[name='mesg']").click(function(){
+		 		   			if(interview == "面试通过" || interview == "面试失败"){
+		 		   				alert("请勿重复操作，此人已面试过了");
+		 		   				return;
+		 		   			}
+		 		   			if(confirm != ""){
+			 		   			alert("已经通知其面试了，请勿重复操作");
+		 		   				return;
+		 		   			}
+		 		   			$("#mianshi").html("<table border='1px' cellpadding='5px' cellspacing='0px' width='600px' align='center'>"
+		 		   					+"<tr><td colspan='4' align='center'><input type='datetime-local' name='date' requied='requied'>"
+		 		   					+"</td></tr></table>");
+		 		   			$("input[name='date']").blur(function(){
+		 		   				var date = $(this).val();
+		 		   				var dateTime = date.split("T")[0]+" "+date.split("T")[1];
+		 		   				var date1 = new Date(dateTime);
+		 		   				var date2 = new Date();
+		 		   				if(date1 < date2){
+		 		   					alert("您要求的面试时间难以执行。");
+		 		   					return;
+		 		   				}else if(date1>date2){
+		 		   					var url="${pageContext.request.contextPath}/admin/giveAnInterview.do";
+			 		   				$.ajax({
+			 		   				  type: "post",
+			 		   				  url: url,
+			 		   				  data:{date1:dateTime,offerId:offerId},
+			 		   				  dataType: "text",
+			 		   				  success:function(msg){
+			 		   					  if(msg == "success"){
+			 		   						 alert("面试通知已发出"); 
+			 		   					  }else{
+			 		   						  alert("面试通知发送失败");
+			 		   					  }
+			 		   				  }
+			 		   				});
+		 		   				}
+		 		   			});
+		 		   		});
 		 		   }
 		 		});
 		 	});
@@ -159,9 +245,10 @@ $(function(){
 </head>
 <body>
 <%@ include file="head.jsp" %>
+<div>
 <div id="text">
 <a href="javascript:void(0)" name="showDept">查看部门</a>&nbsp;&nbsp;&nbsp;
-<a href="">新增部门</a>&nbsp;&nbsp;&nbsp;
+<a href="${pageContext.request.contextPath}/admin/goSaveDept.do">新增部门</a>&nbsp;&nbsp;&nbsp;
 <a href="${pageContext.request.contextPath}/admin/goSaveRecruit.do">发布新招聘信息</a>&nbsp;&nbsp;&nbsp;
 <a href="${pageContext.request.contextPath}/admin/goRecruid.do">查看发布的招聘信息</a>&nbsp;&nbsp;&nbsp;
 <a href="javascript:void(0)" name="showOffer">应聘管理</a>
@@ -169,6 +256,7 @@ $(function(){
 <div id="showOne"></div>
 <div id="show"></div>
 <div id="showCurr"></div>
+<div id="mianshi"></div>
 <div id="divTable" style="display: none;">
 	<table border='1px' cellpadding='5px' cellspacing='0px' align='center'>
 		<tr>
@@ -179,6 +267,7 @@ $(function(){
 			<th width="100px">操作</th>
 		</tr>
 	</table>
+</div>
 </div>
 <%@ include file="foot.jsp" %>
 </body>

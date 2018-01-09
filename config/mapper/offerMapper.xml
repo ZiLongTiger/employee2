@@ -5,7 +5,7 @@
 <mapper namespace="com.zy.employee.dao.OfferMapper">
 	
 	<select id="getAllOffer" resultType="Offer" >
-		select * from offer where interview = 0;
+		select * from offer where interview in(0,1,2,3);
 	</select>
 	
 	<select id="getById" resultType="Offer" >

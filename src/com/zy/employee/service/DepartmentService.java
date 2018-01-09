@@ -11,6 +11,8 @@ public interface DepartmentService {
 	
 	public int updateDepartment(Department department);//修改部门
 	
+	public int deleteDepartment(int id);//删除部门
+	
 	public List<Department> getAllDepartment();//查询所有部门信息
 	
 	public Department getByDepId(int id);//根据部门id查到指定部门
