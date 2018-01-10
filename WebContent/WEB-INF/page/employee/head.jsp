@@ -4,10 +4,10 @@
 
 	$(function() {
 		 $.ajax({
-			   url: "${pageContext.request.contextPath}/admin/checkLogin.do",
+			   url: "${pageContext.request.contextPath}/user/checkLogin.do",
 			   type: "POST",
-			   data: {param:"login"},
 			   dataType:"json",
+			   data: {param:"login"},
 			   success: function(returnData){
 				   if(returnData != "false"){
 					   var msg = "欢迎您：" + returnData[0].name + " " + (returnData[0].role == 0 ? "用户" : returnData[0].role == 1 ?"管理员 ":"员工");
@@ -29,11 +29,11 @@
 	
 		<div id="header_menu_right">
 			<div id="divLoginF">
-				<a href="javascript:void(0)">注册</a>
+				<a href="${pageContext.request.contextPath}/user/goRegister.do">注册</a>
 				
 				<span>|</span>
 				
-		        <a href="${pageContext.request.contextPath}/admin/adminGo.do">登录</a>
+		        <a href="${pageContext.request.contextPath}/user/userGo.do">登录</a>
 			</div>
 			
 			<div id="divLoginT" style="display:none;">
@@ -63,7 +63,7 @@
 	</div>
 
 	<div id="header_bottommenu">
-		<a href="${pageContext.request.contextPath}/admin/goMainPage.do">首页</a>
+		<a href="${pageContext.request.contextPath}/user/goEmployeePage.do">首页</a>
 		
 		<!-- <span>|</span>
 		

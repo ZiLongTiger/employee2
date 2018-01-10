@@ -1,7 +1,9 @@
 package com.zy.employee.controller;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,15 +17,21 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSON;
 import com.zy.employee.entity.Curriculumvitae;
 import com.zy.employee.entity.Department;
+import com.zy.employee.entity.Employee;
+import com.zy.employee.entity.ManagerOffer;
 import com.zy.employee.entity.Offer;
 import com.zy.employee.entity.Postion;
 import com.zy.employee.entity.Recruit;
 import com.zy.employee.entity.User;
+import com.zy.employee.service.BonusService;
 import com.zy.employee.service.CurriculumvitaeService;
 import com.zy.employee.service.DepartmentService;
+import com.zy.employee.service.EmployeeService;
 import com.zy.employee.service.OfferService;
 import com.zy.employee.service.PostionService;
+import com.zy.employee.service.RecordsService;
 import com.zy.employee.service.RecruitService;
+import com.zy.employee.service.SalaryService;
 import com.zy.employee.service.UserService;
 
 @Controller("adminController")
@@ -47,6 +55,19 @@ public class AdminController {
 	
 	@Autowired
 	private OfferService offerService;
+	
+	@Autowired
+	private EmployeeService employeeService;
+	
+	@Autowired
+	private RecordsService recordsService;
+	
+	@Autowired
+	private SalaryService salaryService;
+	
+	@Autowired
+	private BonusService bonusService;
+	
 	//用来储存登录账号
 	private static User loginUser = null;
 	
@@ -80,6 +101,10 @@ public class AdminController {
 			return "success";
 		}else if(user != null && user.getRole() == 1 && user.getUserLock() == 1) {
 			return "disappear";
+		}else if(user != null && user.getRole() == 2 && user.getUserLock() == 0) {
+			//判断是不是manager
+			loginUser = user;
+			return "success2";
 		}
 		return "error";
 	}
@@ -165,6 +190,10 @@ public class AdminController {
 		System.out.println(depName);
 		Department dept = departmentService.getByDepName(depName);
 		//如果部门底下还有员工 则不能解散
+		List<Employee> list = employeeService.getByEmployeeDeptId(dept.getId());
+		if(list.size() > 0) {
+			return "not";
+		}
 		dept.setDepLock(0);
 		int res = departmentService.updateDepartment(dept);
 		if(res > 0) {
@@ -311,8 +340,13 @@ public class AdminController {
 	@ResponseBody
 	public String delPostion(HttpServletRequest req) throws IOException {
 		req.setCharacterEncoding("utf-8");
+		int posId = Integer.valueOf(req.getParameter("id"));
 		//如果有员工则不能删除
-		int res = postionService.deleteById(Integer.valueOf(req.getParameter("id")));
+		List<Employee> list = employeeService.getByEmployeePosId(posId);
+		if(list.size() > 0) {
+			return "didnot";
+		}
+		int res = postionService.deleteById(posId);
 		if(res>0) {
 			return "success";
 		}
@@ -371,5 +405,116 @@ public class AdminController {
 			return "error";
 		}
 		return "success";
+	}
+	
+	//跳转到manager界面
+	@RequestMapping("goManagerMainPage.do")
+	public String goManagerMainPage() {
+		return "manager/main";
+	}
+	
+	//检查是否有面试通知
+	@RequestMapping("checkMessage.do")
+	@ResponseBody
+	public String cheackMessage() {
+		List<Offer> offer = offerService.getAllOffer();
+		if(offer.size() > 0) {
+			for (Offer offer2 : offer) {
+				if(offer2.getConfirm() != null || offer2.getConfirm() != null) {
+					if(offer2.getInterview() == 0) {
+						return "success";
+					}
+				}
+			}
+		}
+		return "error";
+	}
+	//查看面试消息
+	@RequestMapping("message.do")
+	@ResponseBody
+	public String message() {
+		List<Offer> offer = offerService.getAllOffer();
+		List<ManagerOffer> list = new ArrayList<ManagerOffer>();
+		ManagerOffer managerOffer = null;
+		if(offer.size() > 0) {
+			for (Offer offer2 : offer) {
+				if(offer2.getConfirm() != null || offer2.getConfirm() != null) {
+					if(offer2.getInterview() == 0) {
+						Curriculumvitae curriculumvitae = curriculumvitaeService.getById(offer2.getCurId());
+						managerOffer = new ManagerOffer(offer2.getId(), curriculumvitae, offer2);
+						list.add(managerOffer);
+					}
+				}
+			}
+		}
+		Object json = JSON.toJSON(list);
+		return ""+json;
+	}
+	
+	//通过职位查询员工
+	@RequestMapping("showEmployee.do")
+	@ResponseBody
+	public String showEmployee(HttpServletRequest req) {
+		int deptId = Integer.parseInt(req.getParameter("deptId"));
+		int posId = Integer.parseInt(req.getParameter("posId"));
+		List<Employee> list = employeeService.getByEmployeePosIdAndDeptId(posId,deptId);
+		Object json = JSON.toJSON(list);
+		return ""+json;
+	}
+	
+	//添加员工
+	@RequestMapping("saveEmployee.do")
+	@ResponseBody
+	public String saveEmployee(HttpServletRequest req) {
+		int curId = Integer.parseInt(req.getParameter("id"));
+		int offerId = Integer.parseInt(req.getParameter("offerId"));
+		Curriculumvitae curriculumvitae = curriculumvitaeService.getById(curId);
+		int uid = curriculumvitae.getUser().getId();
+		String realName = curriculumvitae.getRealName();
+		String phone = curriculumvitae.getPhone();
+		String email = curriculumvitae.getEmail();
+		int posId = 0;
+		String depName = curriculumvitae.getJobPostion().split(",")[0];
+		System.out.println(depName);
+		Department dept = departmentService.getByDepName(depName);
+		
+		List<Postion> list = postionService.getByDepId(dept.getId());
+		for (Postion postion : list) {
+			if(postion.getPosName().equals(curriculumvitae.getJobPostion().split(",")[1])) {
+				posId = postion.getId();
+			}
+		}
+		String record = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+		int res = employeeService.insertEmployee(new Employee(realName, phone, email, dept.getId(), posId,
+				curriculumvitae.getUser().getId(), curId, record, 0));
+		Offer offer = offerService.getById(offerId);
+		if(offer.getStatics() == 2) {
+			return "no";
+		}
+		if(res > 0) {
+			offer.setStatics(2);
+			offer.setInterview(3);
+			offerService.updateOffer(offer);
+			User user = userService.getUserById(uid);
+			user.setRole(3);
+			return "success";
+		}
+		return "error";
+	}
+	//不录用该员工
+	@RequestMapping("notSaveEmployee.do")
+	@ResponseBody
+	public String notSaveEmployee(HttpServletRequest req) {
+		int offerId = Integer.parseInt(req.getParameter("offerId"));
+		Offer offer = offerService.getById(offerId);
+		if(offer.getStatics() == 2) {
+			return "no";
+		}
+		offer.setInterview(2);
+		int res = offerService.updateOffer(offer);
+		if(res > 0) {
+			return "success";
+		}
+		return "error";
 	}
 }

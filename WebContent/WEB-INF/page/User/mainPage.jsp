@@ -31,23 +31,27 @@ $(function(){
 			  url:url,
 			  dataType: "json",
 			  success:function(msg){
-				 $("#divTable").show();
-				 $("table tr:gt(0)").empty();
-				 var trs = [];
-				 $(msg).each(function(){
-					 var delivery = this.delivery;//投递时间
-					 var confirm = this.confirm;//面试时间
-					 var statics = (this.statics==0?"未查看":"已查看");//简历是否被查看
-					 
-					 var tds = [];
-					 tds.push("<td>" + delivery + "</td>");
-					 tds.push("<td>" + statics + "</td>");
-					 tds.push("<td>" + confirm + "</td>");
-					 tds.push("<td>按时面试</td>");
-					 var tr = "<tr>" + tds.join("") + "</tr>";
-					 trs.push(tr);
-				 });
-				 $("table").append(trs.join(""));
+				 if(msg.length > 0){
+					 $("#divTable").show();
+					 $("table tr:gt(0)").empty();
+					 var trs = [];
+					 $(msg).each(function(){
+						 var delivery = this.delivery;//投递时间
+						 var confirm = this.confirm;//面试时间
+						 var statics = (this.statics==0?"未查看":"已查看");//简历是否被查看
+						 
+						 var tds = [];
+						 tds.push("<td>" + delivery + "</td>");
+						 tds.push("<td>" + statics + "</td>");
+						 tds.push("<td>" + confirm + "</td>");
+						 tds.push("<td>按时面试</td>");
+						 var tr = "<tr>" + tds.join("") + "</tr>";
+						 trs.push(tr);
+					 });
+					 $("table").append(trs.join(""));
+				 }else{
+					 alert("还没有面试通知");
+				 }
 			  }
 			});
 	});

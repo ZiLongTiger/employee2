@@ -2,6 +2,8 @@ package com.zy.employee.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.zy.employee.entity.Employee;
 
 public interface EmployeeMapper {
@@ -10,9 +12,13 @@ public interface EmployeeMapper {
 	
 	public Employee getByEmployeeId(int id);
 	
-	public Employee getByEmployeeDeptId(int deptId);
+	public Employee getByEmployeeByUid(int uid);
 	
-	public Employee getByEmployeePosId(int posId);
+	public List<Employee> getByEmployeeDeptId(int deptId);
+	
+	public List<Employee> getByEmployeePosId(int posId);
+	
+	public List<Employee> getByEmployeePosIdAndDeptId(@Param(value="posId")int posId,@Param(value="deptId")int deptId);
 	
 	public int insertEmployee(Employee employee);
 	

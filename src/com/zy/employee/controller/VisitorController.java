@@ -17,15 +17,21 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSON;
 import com.zy.employee.entity.Curriculumvitae;
 import com.zy.employee.entity.Department;
+import com.zy.employee.entity.Employee;
+import com.zy.employee.entity.Employee2;
 import com.zy.employee.entity.Offer;
 import com.zy.employee.entity.Postion;
 import com.zy.employee.entity.Recruit;
 import com.zy.employee.entity.User;
+import com.zy.employee.service.BonusService;
 import com.zy.employee.service.CurriculumvitaeService;
 import com.zy.employee.service.DepartmentService;
+import com.zy.employee.service.EmployeeService;
 import com.zy.employee.service.OfferService;
 import com.zy.employee.service.PostionService;
+import com.zy.employee.service.RecordsService;
 import com.zy.employee.service.RecruitService;
+import com.zy.employee.service.SalaryService;
 import com.zy.employee.service.UserService;
 
 @Controller("visitorController")
@@ -49,6 +55,18 @@ public class VisitorController {
 	
 	@Autowired
 	private OfferService offerService;
+	
+	@Autowired
+	private EmployeeService employeeService;
+	
+	@Autowired
+	private RecordsService recordsService;
+	
+	@Autowired
+	private SalaryService salaryService;
+	
+	@Autowired
+	private BonusService bonusService;
 	
 	private static User login_user = null;
 	
@@ -87,7 +105,7 @@ public class VisitorController {
 			login_user = user;
 			System.out.println("success");
 			return "success";
-		}else if(user != null && user.getRole() == 2 && user.getUserLock() == 0) {
+		}else if(user != null && user.getRole() == 3 && user.getUserLock() == 0) {
 			login_user = user;
 			return "success2";
 		}else if(user != null && user.getRole() == 0 && user.getUserLock() == 1) {
@@ -329,6 +347,9 @@ public class VisitorController {
 	@ResponseBody
 	public String cheackMessage() {
 		Offer offer = offerService.getByuId(login_user.getId());
+		if(offer.getInterview() == 4 || offer.getInterview() == 3) {
+			return "error";
+		}
 		if(offer.getConfirm() != null || offer.getConfirm() != "") {
 			return "success";
 		}
@@ -343,7 +364,70 @@ public class VisitorController {
 		list.add(offer);
 		Object json = JSON.toJSON(list);
 		return ""+json;
+	}
+	//跳转到员工主界面
+	@RequestMapping("goEmployeePage.do")
+	public String goEmployeePage() {
+		return "employee/employeeMain";
+	}
+	//查看个人信息
+	@RequestMapping("showSelfMsg.do")
+	@ResponseBody
+	public String showSelfMsg() {
+		Employee employee = employeeService.getByEmployeeByUid(login_user.getId());
+		Postion postion = postionService.getById(employee.getPosId());
+		Department dept = departmentService.getByDepId(employee.getDepId());
+		Curriculumvitae curriculumvitae = curriculumvitaeService.getById(employee.getCurrId());
+		Employee2 em2 = new Employee2(employee.getId(),employee.getEmail(),employee.getPhone(), dept, postion, login_user, curriculumvitae, employee.getRecord(), employee.getStatus());
+		List<Employee2> list = new ArrayList<Employee2>();
+		list.add(em2);
+		Object json = JSON.toJSON(list);
+		return ""+json;
+	}
+	//修改个人信息页面跳转
+	@RequestMapping("goUpdateEmpl.do")
+	public String goUpdateEmpl(Model model) {
+		Employee employee = employeeService.getByEmployeeByUid(login_user.getId());
+		Postion postion = postionService.getById(employee.getPosId());
+		Department dept = departmentService.getByDepId(employee.getDepId());
+		Curriculumvitae curriculumvitae = curriculumvitaeService.getById(employee.getCurrId());
+		Employee2 em2 = new Employee2(employee.getId(),employee.getEmail(),employee.getPhone(), dept, postion, login_user, curriculumvitae, employee.getRecord(), employee.getStatus());
+		model.addAttribute("empl", em2);
+		return "employee/selfMsg";
+	}
+	
+	//员工修改个人信息
+	@RequestMapping("updateEmployee.do")
+	public String updateEmployee(HttpServletRequest req) {
+		int id = Integer.parseInt(req.getParameter("id"));
+		String phone = req.getParameter("phone");
+		String email = req.getParameter("email");
+		Employee employee = employeeService.getByEmployeeId(id);
+		employee.setPhone(phone);
+		employee.setEmail(email);
+		employeeService.updateEmployee(employee);
 		
-		
+		return "redirect:goEmployeePage.do";
+	}
+	
+	//展示部门
+	@RequestMapping("showDepartMent.do")
+	@ResponseBody
+	public String showDepartMent(Model model) {
+		List<Department> list = departmentService.getAllDepartment();
+		Object json = JSON.toJSON(list);
+		return ""+json;
+	}
+	
+	//展示职位
+	@RequestMapping("showPostion.do")
+	@ResponseBody
+	public String showPostion(HttpServletRequest req) throws IOException {
+		req.setCharacterEncoding("utf-8");
+		String depName = req.getParameter("depName");
+		Department dept = departmentService.getByDepName(depName);
+		List<Postion> list = postionService.getByDepId(dept.getId());
+		Object json = JSON.toJSON(list);
+		return ""+json;
 	}
 }

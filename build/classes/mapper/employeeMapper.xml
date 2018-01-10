@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zy.employee.dao.EmployeeMapper">
+	
+	<select id="getAllEmployee" resultType="Employee">
+		select *  from employee where status=0;
+	</select>
+	
+	<select id="getByEmployeeByUid" resultType="Employee">
+		select * from employee where uid=#{uid};
+	</select>
+	
+	<select id="getByEmployeeId" resultType="Employee">
+		select *  from employee where id=#{id};
+	</select>
+	
+	<select id="getByEmployeePosIdAndDeptId" resultType="Employee">
+		select *  from employee where pos_id=#{posId} and dep_id=#{deptId} and status=0;
+	</select>
+	
+	<select id="getByEmployeePosId" resultType="Employee">
+		select *  from employee where pos_id=#{posId} and status=0;
+	</select>
+	
+	<select id="getByEmployeeDeptId" resultType="Employee">
+		select *  from employee where dep_id=#{deptId} and status=0;
+	</select>
+	
+	
+	<insert id="insertEmployee">
+		insert into `employee`
+		(`realName`,`phone`,`email`,`dep_id`,`pos_id`,`uid`,`curr_id`,`record`,`status`)
+		values
+		(#{realName},#{phone},#{email},#{depId},#{posId},#{uid},#{currId},#{record},#{status});
+	</insert>
+	
+	<update id="updateEmployee">
+		update `employee`
+		<set>
+		<if test="realName != null and realName != ''">
+		`realName`=#{realName},
+		</if>
+		<if test="phone != null and phone != ''">
+		`phone`=#{phone},
+		</if>
+		
+		<if test="email != null and email != ''">
+		`email`=#{email},
+		</if>
+		<if test="depId != null and depId != ''">
+		`dep_id`=#{depId},
+		</if>
+		
+		<if test="posId != null and posId != ''">
+		`pos_id`=#{posId},
+		</if>
+		<if test="uid != null and uid != ''">
+		`uid`=#{uid},
+		</if>
+		<if test="currId != null and currId != ''">
+		`curr_id`=#{currId},
+		</if>
+		<if test="record != null and record != ''">
+		`record`=#{record},
+		</if>
+		<if test="status != null and status != ''">
+		`status`=#{status},
+		</if>
+		</set>
+		 where `id`=#{id};
+	</update>
+	
+	<delete id="deleteEmployeeById">
+		delete from employee where id=#{id};
+	</delete>
+</mapper>

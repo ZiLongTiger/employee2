@@ -18,7 +18,30 @@ public class Employee{
 	
 	private int currId;
 
-	public Employee(int id, String realName, String phone, String email, int depId, int posId, int uid, int currId) {
+	public String record;//入职日期
+	
+	public int status;//员工状态 0试用期  1正常 2离职
+	
+	public Employee() {
+		super();
+	}
+
+	public Employee(String realName, String phone, String email, int depId, int posId, int uid, int currId,
+			String record, int status) {
+		super();
+		this.realName = realName;
+		this.phone = phone;
+		this.email = email;
+		this.depId = depId;
+		this.posId = posId;
+		this.uid = uid;
+		this.currId = currId;
+		this.record = record;
+		this.status = status;
+	}
+
+	public Employee(int id, String realName, String phone, String email, int depId, int posId, int uid, int currId,
+			String record, int status) {
 		super();
 		this.id = id;
 		this.realName = realName;
@@ -28,21 +51,8 @@ public class Employee{
 		this.posId = posId;
 		this.uid = uid;
 		this.currId = currId;
-	}
-
-	public Employee(String realName, String phone, String email, int depId, int posId, int uid, int currId) {
-		super();
-		this.realName = realName;
-		this.phone = phone;
-		this.email = email;
-		this.depId = depId;
-		this.posId = posId;
-		this.uid = uid;
-		this.currId = currId;
-	}
-
-	public Employee() {
-		super();
+		this.record = record;
+		this.status = status;
 	}
 
 	public int getId() {
@@ -109,9 +119,26 @@ public class Employee{
 		this.currId = currId;
 	}
 
+	public String getRecord() {
+		return record;
+	}
+
+	public void setRecord(String record) {
+		this.record = record;
+	}
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
+	}
+
 	@Override
 	public String toString() {
 		return "Employee [id=" + id + ", realName=" + realName + ", phone=" + phone + ", email=" + email + ", depId="
-				+ depId + ", posId=" + posId + ", uid=" + uid + ", currId=" + currId + "]";
+				+ depId + ", posId=" + posId + ", uid=" + uid + ", currId=" + currId + ", record=" + record
+				+ ", status=" + status + "]";
 	}
 }

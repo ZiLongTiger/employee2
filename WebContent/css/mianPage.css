@@ -5,3 +5,30 @@
 	font-size: 20px;
 }
 
+#main2{
+	margin-left: 180px;
+	font-size: 20px;
+}
+
+#showOne{
+	margin-left: 180px;
+	font-size: 20px;
+	float: left;
+}
+
+#show{
+	margin-left: 80px;
+	float: left;
+	font-size: 18px;
+}
+
+#showEmployee{
+	margin-left: 80px;
+	float: left;
+	font-size: 18px;
+}
+
+#daka{
+	float: left;
+}
+

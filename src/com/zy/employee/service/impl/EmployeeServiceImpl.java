@@ -26,12 +26,12 @@ public class EmployeeServiceImpl implements EmployeeService {
 	}
 
 	@Override
-	public Employee getByEmployeeDeptId(int deptId) {
+	public List<Employee> getByEmployeeDeptId(int deptId) {
 		return employeeMapper.getByEmployeeDeptId(deptId);
 	}
 
 	@Override
-	public Employee getByEmployeePosId(int posId) {
+	public List<Employee> getByEmployeePosId(int posId) {
 		return employeeMapper.getByEmployeePosId(posId);
 	}
 
@@ -48,6 +48,16 @@ public class EmployeeServiceImpl implements EmployeeService {
 	@Override
 	public int deleteEmployeeById(int id) {
 		return employeeMapper.deleteEmployeeById(id);
+	}
+
+	@Override
+	public List<Employee> getByEmployeePosIdAndDeptId(int deptId, int posId) {
+		return employeeMapper.getByEmployeePosIdAndDeptId(deptId, posId);
+	}
+
+	@Override
+	public Employee getByEmployeeByUid(int uid) {
+		return employeeMapper.getByEmployeeByUid(uid);
 	}
 
 }

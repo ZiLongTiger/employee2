@@ -7,7 +7,7 @@
 <title></title>
 </head>
 <body>
-<a href="admin/adminGo.do">管理员登录</a>
-<a href="${pageContext.request.contextPath}/user/userGo.do">用户登录</a>
+<a href="${pageContext.request.contextPath}/admin/adminGo.do">管理员经理登录</a>
+<a href="${pageContext.request.contextPath}/user/userGo.do">用户员工登录</a>
 </body>
 </html>

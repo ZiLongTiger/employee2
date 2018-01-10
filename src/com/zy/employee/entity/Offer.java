@@ -1,15 +1,16 @@
 package com.zy.employee.entity;
+
 public class Offer{
 
 	private int id;
 	
 	private int curId;//简历id
 	
-	private int statics;//0表示改简历未查看  1表示已查看
+	private int statics;//0表示改简历未查看  1表示已查看 2删除
 	
 	private String delivery;//投递时间
 	
-	private int interview;//0表示未面试 1表示面试通过   2面试失败 3简历看不过去
+	private int interview;//0表示未面试 1表示面试通过   2面试失败 3已录用 4简历看不过去
 	
 	private String confirm;//通知其面试时间
 	

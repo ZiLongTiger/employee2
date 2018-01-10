@@ -83,6 +83,7 @@ checkedRegister = function(){
 </head>
 <body>
 <%@ include file="head.jsp" %>
+	
 		<table cellpadding="5px" cellspacing="0px" align="center">
 			<tr>
 				<td align="right">请输入用户名：</td>

@@ -35,7 +35,10 @@ login = function(){
 				   $("#errorMsg").text("无效的管理员账号");
 			   }else if(data == "success"){
 				   window.location = "${pageContext.request.contextPath}/admin/goMainPage.do";
-			   }
+			   }else if(data == "success2"){
+				   window.location = "${pageContext.request.contextPath}/admin/goManagerMainPage.do";
+			   }  
+			   
 		   }
 		 });
 }

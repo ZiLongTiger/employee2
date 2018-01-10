@@ -17,6 +17,7 @@ $(function(){
 	$("a[name='showDept']").click(function(){
 		$("#divTable").hide();
 		$("#showCurr").empty();
+		
 		$("#mianshi").empty();
 		var depName = $(this).text();
 		var url = "${pageContext.request.contextPath}/admin/showDepartMent.do";
@@ -25,6 +26,10 @@ $(function(){
 			   url: url,
 			   dataType:"json",
 			   success: function(msg){
+				 if(!msg.length>0){
+					 alert("暂时还没有部门信息，去试试新增部门吧");
+					 return;
+				 }
 			     var show = $("#showOne");
 			     show.empty();
 			     show.append("部门：<br/>");
@@ -34,6 +39,7 @@ $(function(){
 			   	 }
 			   	 
 			   	$("a[name='showPostion']").click(function(){
+			   		$("#showEmployee").empty();
 					var depName = $(this).text();
 					var id = $(this).prev().val();
 					var url = "${pageContext.request.contextPath}/admin/showPostion.do";
@@ -48,9 +54,36 @@ $(function(){
 							     show.empty();
 							     show.append("职位：<br/>");
 							   	 for(var i=0;i<msg.length;i++){
-							   		show.append("<span><a href='javascript:void(0)' name='showEmployee'>"+msg[i].posName+"</a>&nbsp;&nbsp;<a href='${pageContext.request.contextPath}/admin/goSavePostion.do?depId="+msg[i].department.id+"'>新增职位</a>"
+							   		show.append("<span><input type='hidden' value='"+msg[i].id+"'/><input type='hidden' value='"+msg[i].department.id+"'/>"+
+							   				"<a href='javascript:void(0)' name='showEmployee'>"+msg[i].posName+"</a>&nbsp;&nbsp;<a href='${pageContext.request.contextPath}/admin/goSavePostion.do?depId="+msg[i].department.id+"'>新增职位</a>"
 							   		+"&nbsp;&nbsp;<a href='${pageContext.request.contextPath}/admin/querySingle.do?posId="+msg[i].id+"&depId="+msg[i].department.id+"'>修改职位</a>&nbsp;&nbsp;<input type='hidden' value='"+msg[i].id+"'/><a name='delpostion'>删除职位</a><br/><br/><span>");
 							   	 }
+							   	 $("a[name='showEmployee']").click(function(){
+							   		var url="${pageContext.request.contextPath}/admin/showEmployee.do";
+							   		var deptId = $(this).prev().val();
+							   		var posId = $(this).prev().prev().val();
+							   		$.ajax({
+							   		   type: "POST",
+							   		   url: url,
+							   		   data: {deptId:deptId,posId:posId},
+							   		   dataType: "json",
+							   		   success: function(msg){
+							   			if(msg.length > 0){
+							   				$("#showEmployee").empty();
+								   			$("#showEmployee").append("员工：<br/>");
+								   			 $(msg).each(function(){
+								   				 var name = this.realName;
+								   				 var status = this.status;
+								   				 var sta = (status == 0?"试用期员工":status == 1?"正式员工":"离职员工");
+								   				 $("#showEmployee").append("<span>"+name+ " " + sta + "</span>"); 
+								   			 });
+							   			}else{
+							   				$("#showEmployee").empty();
+								   			$("#showEmployee").append("<br>该部门的职位下还没有员工信息");
+							   			}
+							   		   }
+							   		});
+							   	 });
 							   	$("a[name='delpostion']").click(function(){ 
 							   		var posName = $(this).prev().prev().prev().prev().text();
 							   		var id = $(this).prev().val();
@@ -66,6 +99,8 @@ $(function(){
 												   if(msg == "success"){
 													   span.remove();
 													   alert("删除成功");
+													}else if(msg == "didnot"){
+														alert("该职位下还有员工存在，暂不可删除");
 													}else{
 														alert("删除失败");
 													}
@@ -99,6 +134,8 @@ $(function(){
 								   if(msg == "success"){
 									   span.remove();
 									   alert(depName + "已解散");
+								   }else if(msg == "not"){
+									   alert("该部门下还有员工存在，暂不可解散");
 								   }else{
 									   alert(depName + "还不能解散");
 								   }
@@ -116,6 +153,7 @@ $(function(){
 	$("a[name='showOffer']").click(function(){
 		$("#show").empty();
 		$("#showOne").empty();
+		$("#showEmployee").empty();
 		$("#showCurr").empty();
 		$("#mianshi").empty();
 		var url = "${pageContext.request.contextPath}/admin/showOffer.do";
@@ -255,6 +293,7 @@ $(function(){
 </div>
 <div id="showOne"></div>
 <div id="show"></div>
+<div id="showEmployee"></div>
 <div id="showCurr"></div>
 <div id="mianshi"></div>
 <div id="divTable" style="display: none;">

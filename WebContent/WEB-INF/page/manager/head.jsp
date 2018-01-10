@@ -10,7 +10,8 @@
 			   dataType:"json",
 			   success: function(returnData){
 				   if(returnData != "false"){
-					   var msg = "欢迎您：" + returnData[0].name + " " + (returnData[0].role == 0 ? "用户" : returnData[0].role == 1 ?"管理员 ":"员工");
+					   var msg = "欢迎您：" + returnData[0].name + " " 
+					   + (returnData[0].role == 0 ? "用户" : returnData[0].role == 1 ?"管理员 ":returnData[0].role == 2 ? "经理":"员工");
 						
 						$("#spLoginMsg").text(msg);
 						$("#divLoginT").show();
@@ -65,8 +66,8 @@
 	<div id="header_bottommenu">
 		<a href="${pageContext.request.contextPath}/admin/goMainPage.do">首页</a>
 		
-		<span>|</span>
+		<!-- <span>|</span>
 		
-		<a href="javascript:void(0)">创建简历</a>
+		<a href="javascript:void(0)">创建简历</a> -->
 	</div>
 </div>

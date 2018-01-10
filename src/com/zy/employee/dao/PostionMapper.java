@@ -14,5 +14,7 @@ public interface PostionMapper {
 	
 	public Postion getById(int id);
 	
+	public Postion getByName(String posName);
+	
 	public int deleteById(int id);
 }
