@@ -15,13 +15,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSON;
+import com.zy.employee.entity.Bonus;
 import com.zy.employee.entity.Curriculumvitae;
 import com.zy.employee.entity.Department;
 import com.zy.employee.entity.Employee;
 import com.zy.employee.entity.Employee2;
 import com.zy.employee.entity.Offer;
 import com.zy.employee.entity.Postion;
+import com.zy.employee.entity.Records;
 import com.zy.employee.entity.Recruit;
+import com.zy.employee.entity.Salary;
 import com.zy.employee.entity.User;
 import com.zy.employee.service.BonusService;
 import com.zy.employee.service.CurriculumvitaeService;
@@ -79,8 +82,12 @@ public class VisitorController {
 			list.add(login_user);
 			Object json = JSON.toJSON(list);
 			return ""+json;
+		}else {
+			List<String>list = new ArrayList<String>();
+			list.add("no");
+			Object json = JSON.toJSON(list);
+			return ""+json;
 		}
-		return "false";
 	}
 	
 	//跳转到用户登录界面
@@ -249,6 +256,17 @@ public class VisitorController {
 		model.addAttribute("departMent", departMent);
 		model.addAttribute("postion", list);
 		return "User/Curriculumvitae";
+	}
+	//查看简历是否投递 ，如果投递则不可再次修改
+	@RequestMapping("checkCurr.do")
+	@ResponseBody
+	public String check(HttpServletRequest req) {
+		int id = Integer.valueOf(req.getParameter("id"));
+		Offer offer = offerService.getBycurId(id);
+		if(offer!=null) {
+			return "no";
+		}
+		return "ok";
 	}
 	
 	//修改简历
@@ -429,5 +447,83 @@ public class VisitorController {
 		List<Postion> list = postionService.getByDepId(dept.getId());
 		Object json = JSON.toJSON(list);
 		return ""+json;
+	}
+	//上班打卡
+	@RequestMapping("clockIn.do")
+	@ResponseBody
+	public String clockIn(HttpServletRequest req) {
+		String clockIn = req.getParameter("time");
+		String types = req.getParameter("types");
+		String month = clockIn.split("-")[0]+"-"+clockIn.split("-")[1];
+		Records records = new Records(clockIn, null, types, login_user.getId(), 0);
+		int res = recordsService.insertRecords(records);
+		if(res>0) {
+			if(types.equals("迟到打卡")) {
+				Salary salary = salaryService.getSalaryByMonthAndUid(login_user.getId(), month);
+				if(salary != null) {
+					salary.setLate(salary.getLate()+50);
+					salaryService.updateSalary(salary);
+				}else {
+					Employee employee = employeeService.getByEmployeeByUid(login_user.getId());
+					Department department = departmentService.getByDepId(employee.getDepId());
+					Salary salary2 = new Salary(50, 0, 0, 0, 0, login_user.getId(), 0, department.getBaseWage(), month);
+					salaryService.insertSalary(salary2);
+				}
+			}
+			if(types.equals("旷工")) {
+				Salary salary = salaryService.getSalaryByMonthAndUid(login_user.getId(), month);
+				if(salary != null) {
+					salary.setAbsenteeism(salary.getAbsenteeism()+100);
+					salaryService.updateSalary(salary);
+				}else {
+					Employee employee = employeeService.getByEmployeeByUid(login_user.getId());
+					Department department = departmentService.getByDepId(employee.getDepId());
+					Salary salary2 = new Salary(0, 0, 0, 0, 100, login_user.getId(), 0, department.getBaseWage(), month);
+					salaryService.insertSalary(salary2);
+				}
+			}
+			return "success";
+		}
+		return "error";
+	}
+	//下班打卡
+	@RequestMapping("clockOut.do")
+	@ResponseBody
+	public String clockOut(HttpServletRequest req) {
+		String clockOut = req.getParameter("time");
+		String types = req.getParameter("types");
+		String month = clockOut.split("-")[0]+"-"+clockOut.split("-")[1];
+		Records records = recordsService.getByRecordsUidAndDeleStatus(0, login_user.getId());
+		records.setClockOut(clockOut);
+		records.setTypes(records.getTypes()+","+types);
+		int res = recordsService.updateRecords(records);
+		if(res>0) {
+			if(types.equals("下班早退")) {
+				Salary salary = salaryService.getSalaryByMonthAndUid(login_user.getId(), month);
+				if(salary != null) {
+					salary.setEarly(salary.getEarly()+50);
+					salaryService.updateSalary(salary);
+				}else {
+					Employee employee = employeeService.getByEmployeeByUid(login_user.getId());
+					Department department = departmentService.getByDepId(employee.getDepId());
+					Salary salary2 = new Salary(0, 0, 0, 50, 0, login_user.getId(), 0, department.getBaseWage(), month);
+					salaryService.insertSalary(salary2);
+				}
+			}
+			if(types.equals("旷工")) {
+				Salary salary = salaryService.getSalaryByMonthAndUid(login_user.getId(), month);
+				if(salary != null) {
+					salary.setAbsenteeism(salary.getAbsenteeism()+100);
+					salaryService.updateSalary(salary);
+				}else {
+					Employee employee = employeeService.getByEmployeeByUid(login_user.getId());
+					Department department = departmentService.getByDepId(employee.getDepId());
+					Salary salary2 = new Salary(0, 0, 0, 0, 100, login_user.getId(), 0, department.getBaseWage(), month);
+					salaryService.insertSalary(salary2);
+				}
+			}
+			return "success";
+		}
+		return "error";
 	}
 }

@@ -9,13 +9,15 @@
 			   data: {param:"login"},
 			   dataType:"json",
 			   success: function(returnData){
-				   if(returnData != "false"){
+				   if(returnData[0] != "no"){
 					   var msg = "欢迎您：" + returnData[0].name + " " + (returnData[0].role == 0 ? "用户" : returnData[0].role == 1 ?"管理员 ":"员工");
 						
 						$("#spLoginMsg").text(msg);
 						$("#divLoginT").show();
 						$("#divLoginF").hide();
-				   }
+				   } else{
+					   window.location="${pageContext.request.contextPath}/admin/adminGo.do";
+				   } 
 			   }
 		 });
 	});

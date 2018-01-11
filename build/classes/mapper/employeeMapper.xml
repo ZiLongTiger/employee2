@@ -5,11 +5,11 @@
 <mapper namespace="com.zy.employee.dao.EmployeeMapper">
 	
 	<select id="getAllEmployee" resultType="Employee">
-		select *  from employee where status=0;
+		select *  from employee where status in(0,1,2);
 	</select>
 	
 	<select id="getByEmployeeByUid" resultType="Employee">
-		select * from employee where uid=#{uid};
+		select * from employee where uid=#{uid} and status in(0,1,2);
 	</select>
 	
 	<select id="getByEmployeeId" resultType="Employee">
@@ -17,15 +17,15 @@
 	</select>
 	
 	<select id="getByEmployeePosIdAndDeptId" resultType="Employee">
-		select *  from employee where pos_id=#{posId} and dep_id=#{deptId} and status=0;
+		select *  from employee where pos_id=#{posId} and dep_id=#{deptId} and status in(0,1,2);
 	</select>
 	
 	<select id="getByEmployeePosId" resultType="Employee">
-		select *  from employee where pos_id=#{posId} and status=0;
+		select *  from employee where pos_id=#{posId} and status in(0,1,2);
 	</select>
 	
 	<select id="getByEmployeeDeptId" resultType="Employee">
-		select *  from employee where dep_id=#{deptId} and status=0;
+		select *  from employee where dep_id=#{deptId} aand status in(0,1,2);
 	</select>
 	
 	

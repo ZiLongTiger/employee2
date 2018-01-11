@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSON;
 import com.zy.employee.entity.Curriculumvitae;
 import com.zy.employee.entity.Department;
+import com.zy.employee.entity.EmDepPos;
 import com.zy.employee.entity.Employee;
+import com.zy.employee.entity.Employee2;
 import com.zy.employee.entity.ManagerOffer;
 import com.zy.employee.entity.Offer;
 import com.zy.employee.entity.Postion;
@@ -84,8 +86,12 @@ public class AdminController {
 			list.add(loginUser);
 			Object json = JSON.toJSON(list);
 			return ""+json;
+		}else {
+			List<String>list = new ArrayList<String>();
+			list.add("no");
+			Object json = JSON.toJSON(list);
+			return ""+json;
 		}
-		return "false";
 	}
 	
 	//管理员登录
@@ -497,6 +503,7 @@ public class AdminController {
 			offerService.updateOffer(offer);
 			User user = userService.getUserById(uid);
 			user.setRole(3);
+			userService.updateUser(user);
 			return "success";
 		}
 		return "error";
@@ -517,4 +524,70 @@ public class AdminController {
 		}
 		return "error";
 	}
+	
+	@RequestMapping("queryAllEmployee.do")
+	public String queryAllEmployee(Model model) {
+		List<Employee> list = employeeService.getAllEmployee();
+		List<Employee2> listEmpl = new ArrayList<Employee2>();
+		for (Employee employee : list) {
+			Postion postion = postionService.getById(employee.getPosId());
+			Department dept = departmentService.getByDepId(employee.getDepId());
+			User user = userService.getUserById(employee.getUid());
+			Employee2 emp = new Employee2(employee.getId(),employee.getRealName(), employee.getEmail(), employee.getPhone(),
+					dept, postion, user, null, employee.getRecord(), employee.getStatus());
+			listEmpl.add(emp);
+		}
+		model.addAttribute("data", listEmpl);
+		return "admin/adminMain";
+	}
+	//开除员工
+	@RequestMapping("delEmpl.do")
+	@ResponseBody
+	public String delEmpl(HttpServletRequest req) {
+		int id = Integer.valueOf(req.getParameter("id"));
+		Employee employee = employeeService.getByEmployeeId(id);
+		employee.setStatus(3);
+		int res = employeeService.updateEmployee(employee);
+		if(res>0) {
+			User user = userService.getUserById(employee.getUid());
+			System.out.println(user);
+			user.setRole(0);
+			userService.updateUser(user);
+			return "success";
+		}
+		return "error";
+	}
+	
+	//员工调动
+	@RequestMapping("emplGo.do")
+	@ResponseBody
+	public String emplDepPos(HttpServletRequest req) {
+		int id = Integer.valueOf(req.getParameter("id"));
+		Employee employee = employeeService.getByEmployeeId(id);
+		List<Department> depl = departmentService.getAllDepartment();
+		List<Postion> posl = postionService.getByDepId(employee.getDepId());
+		EmDepPos emDepPos = new  EmDepPos(employee,depl,posl);
+		List<EmDepPos>list = new ArrayList<EmDepPos>();
+		list.add(emDepPos);
+		Object json = JSON.toJSON(list);
+		return "" + json;
+	}
+	
+	@RequestMapping("empChangeDP.do")
+	@ResponseBody
+	public String empChangeDP(HttpServletRequest req) {
+		int depId = Integer.valueOf(req.getParameter("depId"));
+		int posId = Integer.valueOf(req.getParameter("posId"));
+		int eid = Integer.valueOf(req.getParameter("eid"));
+		Employee employee = employeeService.getByEmployeeId(eid);
+		employee.setDepId(depId);
+		employee.setPosId(posId);
+		int res = employeeService.updateEmployee(employee);
+		if(res > 0) {
+			return "success";
+		}
+		return "error";
+	}
+	
+	
 }

@@ -4,6 +4,8 @@ public class Employee2{
 
 	private int id;
 	
+	private String realName;
+	
 	private String email;
 	
 	private String phone;
@@ -90,6 +92,29 @@ public class Employee2{
 
 	public void setPhone(String phone) {
 		this.phone = phone;
+	}
+
+	public String getRealName() {
+		return realName;
+	}
+
+	public void setRealName(String realName) {
+		this.realName = realName;
+	}
+
+	public Employee2(int id, String realName, String email, String phone, Department dept, Postion postion, User user,
+			Curriculumvitae curriculumvitae, String record, int status) {
+		super();
+		this.id = id;
+		this.realName = realName;
+		this.email = email;
+		this.phone = phone;
+		this.dept = dept;
+		this.postion = postion;
+		this.user = user;
+		this.curriculumvitae = curriculumvitae;
+		this.record = record;
+		this.status = status;
 	}
 
 	public Employee2(int id, String email, String phone, Department dept, Postion postion, User user,

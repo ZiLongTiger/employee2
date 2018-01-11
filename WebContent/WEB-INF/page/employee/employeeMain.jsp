@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+    <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -130,11 +131,99 @@ $(function(){
 		$("#btns").show();
 	});
 	$("input[name='clockIn']").click(function(){
-		Date date = new Date();
-		var workShift = "09:00:00";
+		var date = new Date();
+		var year = date.getFullYear();
+		var month = date.getMonth()+1;
+		var day = date.getDate();
+		var hour = date.getHours();
+		var minute = date.getMinutes();
+		var seconds = date.getSeconds();
+		//上班打卡时间
+		var workShift = year+"-"+month+"-"+day + " "+ hour +":"+minute+":"+seconds;
+		//早上9点上班
+		if(hour-9>3){
+			alert("你上班打卡也太晚了吧");
+			var types = "旷工";
+			clockIn(workShift,types);
+		}else if(hour-9 == 0){
+			if(minute-0==0){
+				alert("打卡成功，祝你工作顺利。");
+				var types = "正常打卡";
+				clockIn(workShift,types);
+			}else if(minute-0 > 0){
+				alert("迟到打卡成功，祝你工作顺利。");
+				var types = "迟到打卡";
+				clockIn(workShift,types);
+			}
+			
+		}else{
+			alert("新的一天，早起的鸟儿有虫吃");
+			var types = "正常打卡";
+			clockIn(workShift,types);
+		}
+		
+	});
+	
+	$("input[name='clockOut']").click(function(){
+		var date = new Date();
+		var year = date.getFullYear();
+		var month = date.getMonth()+1;
+		var day = date.getDate();
+		var hour = date.getHours();
+		var minute = date.getMinutes();
+		var seconds = date.getSeconds();
+		//下班打卡时间
+		var colsingTime = year+"-"+month+"-"+day + " "+ hour +":"+minute+":"+seconds;
+		//晚上6点下班
+		if(18-hour>3){
+			if(confirm("你确定这么早就下班吗？")){
+				var types = "旷工";
+				clockOut(colsingTime,types);
+			}
+			return false;
+		}else if(18-hour > 0){
+			if(confirm("你确定要早退吗？")){
+				var types = "下班早退";
+				clockOut(colsingTime,types);
+			}
+			return false;
+		}else{
+			alert("辛苦一天了，愿你晚上有个好梦。");
+			var types = "正常打卡";
+			clockOut(colsingTime,types);
+		}
+		
 		
 	});
 });
+
+function clockOut(time,types){
+	var url = "${pageContext.request.contextPath}/user/clockOut.do";
+	$.ajax({
+		   type: "POST",
+		   url: url,
+		   data: {time:time,types:types},
+		   success: function(msg){
+			   if(msg == "success"){
+			    	 $("input[name='clockIn']").attr("disabled",false); 
+			     }
+		   }
+		});
+}
+
+function clockIn(time,types){
+	var url = "${pageContext.request.contextPath}/user/clockIn.do";
+	$.ajax({
+		   type: "POST",
+		   url: url,
+		   data: {time:time,types:types},
+		   success: function(msg){
+		     if(msg == "success"){
+		    	 $("input[name='clockIn']").attr("disabled",true); 
+		     }
+		   }
+		});
+}
 </script>
 </head>
 <body>
@@ -150,14 +239,19 @@ $(function(){
 </ul>&nbsp;&nbsp;
 <a href="javascript:void(0)" name="selfMsg">查看个人信息</a>&nbsp;&nbsp;&nbsp;&nbsp;
 <a href="javascript:void(0)" name="showDepAndPos">部门职位</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="javascript:void(0)" name="showDepAndPos">考勤记录</a>&nbsp;&nbsp;&nbsp;&nbsp;
 <!-- <a href="">培训</a>&nbsp; -->
-<a href="查看个人信息">薪资</a>
+<a href="javascript:void(0)" name="showSalary">薪资</a>
 </div>
 <div id="showOne"></div>
 <div id="show"></div>
 <div id="showEmployee"></div>
 <div id="showSelf">
 </div>
+<div id="showRes6">
+<c:if test=""></c:if>
+</div>
+
 <%@ include file="foot.jsp" %>
 </body>
 </html>

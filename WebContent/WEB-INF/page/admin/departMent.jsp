@@ -51,7 +51,7 @@
 <form action="${pageContext.request.contextPath}/admin/updatePostion.do" method="get">
 <input type="hidden" name="posId" value="${postion.id}"/>
 部门名称：<input type="text" value="${department.depName}" readonly="readonly"/><br/><br/>
-添加职位:<input type="text" name="posName" value="${postion.posName}" required="required" /><br/><br/>
+修改职位:<input type="text" name="posName" value="${postion.posName}" required="required" /><br/><br/>
 <input type="submit" value="修改职位名">
 </form>
 </div>

@@ -33,6 +33,16 @@ public class MainTest {
 	}
 	
 	@Test
+	public void update() {
+		User user = userMapper.getUserById(1);
+		System.out.println(user);
+		user.setRole(0);
+		userMapper.updateUser(user);
+		User user2 = userMapper.getUserById(1);
+		System.out.println(user2);
+	}
+	
+	@Test
 	public void getPostionById() {
 		System.out.println(postionMapper.getById(1));
 	}

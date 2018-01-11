@@ -12,7 +12,7 @@ public interface SalaryMapper {
 	
 	public Salary getSalaryByMonth(String month);//按月份查询工资
 	
-	public List<Salary> getSalaryByMonthAndUid(@Param(value="uid")int uid,@Param(value="month")String month);
+	public Salary getSalaryByMonthAndUid(@Param(value="uid")int uid,@Param(value="month")String month);
 
 	public int insertSalary(Salary salary);
 	

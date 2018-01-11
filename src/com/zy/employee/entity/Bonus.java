@@ -4,13 +4,13 @@ public class Bonus{
 
 	private int id;
 	
-	private double bonus;//奖金
+	private double bonus;//奖金,罚款
 	
 	private String createTime;//创建时间
 	
 	private String introduce;//说明
 	
-	private String reward;//奖励时间
+	private String reward;//奖励，罚款 时间
 	
 	private int uid;
 	

@@ -25,10 +25,6 @@ public class RecordsServiceImpl implements RecordsService {
 		return recordsMapper.getByRecordsId(id);
 	}
 
-	@Override
-	public Records getByRecordsUid(int uid) {
-		return recordsMapper.getByRecordsUid(uid);
-	}
 
 	@Override
 	public int updateRecords(Records records) {
@@ -38,5 +34,15 @@ public class RecordsServiceImpl implements RecordsService {
 	@Override
 	public int insertRecords(Records records) {
 		return recordsMapper.insertRecords(records);
+	}
+
+	@Override
+	public List<Records> getByRecordsUid(int uid) {
+		return recordsMapper.getByRecordsUid(uid);
+	}
+
+	@Override
+	public Records getByRecordsUidAndDeleStatus(int status, int uid) {
+		return recordsMapper.getByRecordsUidAndDeleStatus(status, uid);
 	}
 }

@@ -5,15 +5,19 @@
 <mapper namespace="com.zy.employee.dao.RecordsMapper">
 	
 	<select id="getAllRecords" resultType="Records" >
-		select * from records where deletestatus=0;
+		select * from records;
 	</select>
 	
 	<select id="getByRecordsId" resultType="Records" >
-		select * from records  where id=#{id} and deletestatus=0;
+		select * from records  where id=#{id};
+	</select>
+	
+	<select id="getByRecordsUidAndDeleStatus" resultType="Records">
+		select * from records  where uid=#{uid} and deletestatus=#{status};
 	</select>
 	
 	<select id="getByRecordsUid" resultType="Records" >
-		select * from offer where uid=#{uid} and deletestatus=0;
+		select * from offer where uid=#{uid};
 	</select>
 	
 	<insert id="insertRecords">

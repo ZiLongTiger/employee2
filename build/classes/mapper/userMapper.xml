@@ -20,4 +20,9 @@
 	<select id="getUserById" resultType="User">
 		select * from user where id=#{id};
 	</select>
+	
+	<update id="updateUser">
+		update `user` set `name`= #{name},`password`= #{password},`role`= #{role},`userLock`= #{userLock}
+		where `id`= #{id};
+	</update>
 </mapper>

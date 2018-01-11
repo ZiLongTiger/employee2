@@ -20,7 +20,7 @@ public class Employee{
 
 	public String record;//入职日期
 	
-	public int status;//员工状态 0试用期  1正常 2离职
+	public int status;//员工状态 0试用期  1正常 2离职 3开除
 	
 	public Employee() {
 		super();

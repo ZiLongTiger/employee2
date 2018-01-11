@@ -31,6 +31,15 @@ $(function(){
 		});
 	});
 	
+	$("a[name='deleRecruid']").click(function(){
+		var title = $(this).prev().text();
+		if(confirm("你确定删除"+title+"这条招聘信息吗?")){
+			return true;
+		}else{
+			return false;
+		}
+	});
+	
 });
 </script>
 
@@ -41,7 +50,7 @@ $(function(){
 	<c:forEach items="${data}" var="recruid">
 		<a name="showRecruid" href="javascript:void(0)">${recruid.title}</a>
 		&nbsp;&nbsp;&nbsp;
-		<a name="showRecruid" href="${pageContext.request.contextPath}/admin/deleteRecruid.do?id=${recruid.id}">删除</a>
+		<a name="deleRecruid" href="${pageContext.request.contextPath}/admin/deleteRecruid.do?id=${recruid.id}">删除</a>
 		<br/><br/>
 	</c:forEach>
 </div>

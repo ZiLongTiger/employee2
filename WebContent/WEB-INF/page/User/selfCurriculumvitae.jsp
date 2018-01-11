@@ -34,7 +34,25 @@ $(function(){
 						"<td align='right'>应聘岗位</td><td>"+msg[0].jobPostion+"</td><td align='right'>工作经验</td>"+
 						"<td>"+msg[0].experience+"</td></tr><tr><td align='right'>期望薪资</td><td colspan='3'>"+msg[0].expectedSalary+"</td>"+
 						"</tr><tr><td align='right' valign='middle'>自我描述</td><td colspan='3'>"+
-						 msg[0].evaluation+ "</td></tr><tr><td colspan='4' align='center'><a href=${pageContext.request.contextPath}/user/querySingle.do?id="+msg[0].id+">修改</a></td></tr></table>");
+						 msg[0].evaluation+ "</td></tr><tr><td colspan='4' align='center'><input type='hidden' value='"+msg[0].id+"'/><a name='update'>修改</a></td></tr></table>");
+			 	$("a[name='update']").click(function(){
+			 		 var id = $(this).prev().val();
+			 		 var url = "${pageContext.request.contextPath}/user/querySingle.do?id="+id;
+			 		 var url2 = "${pageContext.request.contextPath}/user/checkCurr.do"
+			 			$.ajax({
+			 			   type: "POST",
+			 			   url: url2,
+			 			   data: {id:id},
+			 			   success: function(msg){
+								if(msg == "no"){
+									alert("改简历已投递，不可再次修改");
+								}else{
+									window.location = url;
+								}
+			 			   }
+			 			});
+			 	});
+			   
 		   }
 		});
 	});

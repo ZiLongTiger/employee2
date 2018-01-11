@@ -12,7 +12,7 @@ public class Records{
 	
 	private int uid;
 	
-	private int deletestatus;//删除状态 0表示未删除  1表示已删除
+	private int deletestatus;// 0表示当前    1表示昨天
 
 	public Records(int id, String clockIn, String clockOut, String types, int uid, int deletestatus) {
 		super();

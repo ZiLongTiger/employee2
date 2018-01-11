@@ -17,6 +17,7 @@ $(function(){
 	$("a[name='showDept']").click(function(){
 		$("#divTable").hide();
 		$("#showCurr").empty();
+		$("#showEmpl").empty();
 		
 		$("#mianshi").empty();
 		var depName = $(this).text();
@@ -72,6 +73,7 @@ $(function(){
 							   				$("#showEmployee").empty();
 								   			$("#showEmployee").append("员工：<br/>");
 								   			 $(msg).each(function(){
+								   				 var id = this.id;
 								   				 var name = this.realName;
 								   				 var status = this.status;
 								   				 var sta = (status == 0?"试用期员工":status == 1?"正式员工":"离职员工");
@@ -156,6 +158,7 @@ $(function(){
 		$("#showEmployee").empty();
 		$("#showCurr").empty();
 		$("#mianshi").empty();
+		$("#showEmpl").empty();
 		var url = "${pageContext.request.contextPath}/admin/showOffer.do";
 		$.ajax({
 		   type: "POST",
@@ -173,7 +176,7 @@ $(function(){
 				 var delivery = this.delivery;//投递时间
 				 var confirm = this.confirm;//面试时间
 				 var statics = (this.statics==0?"未查看":"已查看");//简历是否被查看
-			     var interview = (this.interview==0?"未面试":this.interview==1 ? "面试通过":"面试失败");//面试状态
+			     var interview = (this.interview==0?"未面试":this.interview==1 ? "面试通过":this.interview==3 ? "已录用":"面试失败");//面试状态
 				 var tds = [];
 				 tds.push("<td>" + uid + "</td>");
 				 tds.push("<td>" + delivery + "</td>");
@@ -184,7 +187,7 @@ $(function(){
 				 trs.push(tr);
 			 });
 		   
-		     $("table").append(trs.join(""));
+		     $("table[name='two']").append(trs.join(""));
 		     
 		    $("a[name='deleteCrue']").click(function(){
 		    	if(confirm("你确定删除这条应聘消息吗？")){
@@ -278,6 +281,108 @@ $(function(){
 		  }
 		});
 	});
+	
+	$("a[name='delEmpl']").click(function(){
+		var url = "${pageContext.request.contextPath}/admin/delEmpl.do";
+		var id = $(this).prev().val();
+		var tr = $(this).parent().parent();
+		var emName = $(this).parent().prev().prev().prev().prev().prev().prev().text();
+		$.ajax({
+			   type: "POST",
+			   url: url,
+			   data: {id:id},
+			   success: function(msg){
+			     if(msg == "success"){
+			    	 alert("员工"+emName+"已被开除,记得将他最近的工资结算清楚");
+			    	 tr.remove();
+			     }else{
+			    	 alert("开除失败");
+			     }
+			   }
+			});
+	});
+	
+	$("a[name='emplPosDep']").click(function(){
+		var id = $(this).prev().prev().val();
+		var url = "${pageContext.request.contextPath}/admin/emplGo.do";
+		$.ajax({
+			   type: "POST",
+			   url: url,
+			   data: {id:id},
+			   dataType:"json",
+			   success: function(msg){
+				   $(msg).each(function(){
+					    var dept = this.depList;
+					    var emp = this.employee;
+					    $("#emName").text(emp.realName);
+					    $("input[name='empId']").val(emp.id);
+					    var depId = emp.depId;
+					    var possId = emp.depId;
+					    $(dept).each(function(){
+					    	var deptId = this.id;
+					   		
+					    	var depName = this.depName;
+					    	if(depId == deptId){
+					    		$("#departMent").append("<option value='"+deptId+"' selected='selected'>"+depName+"</option>");
+					    	}else{
+					    		$("#departMent").append("<option value='"+deptId+"'>"+depName+"</option>");
+					    	}
+					    	
+					    });
+				    	var pos = this.posList;
+				    	$(pos).each(function(){
+						    var posId = this.id;
+						    var posName = this.posName;
+						    if(possId == posId){
+					    		$("#postion").append("<option value='"+posId+"' selected='selected'>"+posName+"</option>");
+					    	}else{
+					    		$("#postion").append("<option value='"+posId+"'>"+posName+"</option>");
+					    	}
+						});
+				   });
+				   $("#dp").show();
+			     
+			   }
+			});
+		
+	});
+	
+	$("#departMent").change(function(){
+		var deptId = $(this).val();
+		$.ajax({
+			   type: "POST",
+			   url: "${pageContext.request.contextPath}/user/changePostion.do",
+			   data: {depId:deptId},
+			   dataType:"json",
+			   success: function(msg){
+				 var postion = $("#postion");
+				 postion.empty();
+				 postion.attr("disabled",false);
+				 for(var i = 0; i < msg.length; i++){
+					 postion.append("<option value='"+msg[i].id+"'>"+msg[i].posName+"</option>");
+				 }
+			   }
+			});
+	});
+	
+	$("input[name='sure']").click(function(){
+		var eid = $(this).prev().prev().prev().val();
+		var depId = $(this).prev().prev().val();
+		var posId = $(this).prev().val();
+		alert(eid+""+depId + "" + posId);
+		$.ajax({
+			   type: "POST",
+			   url: "${pageContext.request.contextPath}/admin/empChangeDP.do",
+			   data: {eid:eid,depId:depId,posId:posId},
+			   success: function(msg){
+				   if(msg == "success"){
+					   alert("调动成功");
+					   $("#dp").hide();
+					   window.location = "${pageContext.request.contextPath}/admin/queryAllEmployee.do";
+				   }
+			   }
+			});
+	});
 });
 </script>
 </head>
@@ -289,15 +394,71 @@ $(function(){
 <a href="${pageContext.request.contextPath}/admin/goSaveDept.do">新增部门</a>&nbsp;&nbsp;&nbsp;
 <a href="${pageContext.request.contextPath}/admin/goSaveRecruit.do">发布新招聘信息</a>&nbsp;&nbsp;&nbsp;
 <a href="${pageContext.request.contextPath}/admin/goRecruid.do">查看发布的招聘信息</a>&nbsp;&nbsp;&nbsp;
+<a href="${pageContext.request.contextPath}/admin/queryAllEmployee.do">员工管理</a>&nbsp;&nbsp;&nbsp;
 <a href="javascript:void(0)" name="showOffer">应聘管理</a>
 </div>
+
 <div id="showOne"></div>
 <div id="show"></div>
-<div id="showEmployee"></div>
+<div id="showEmployee">
+</div>
 <div id="showCurr"></div>
 <div id="mianshi"></div>
+<div id="showEmpl">
+	<c:if test="${!empty data}">
+		
+		<table border='1px' cellpadding='5px' cellspacing='0px' align='center'>
+			<tr>
+				<th>员工姓名</th>
+				<th>联系方式</th>
+				<th>EMAIL</th>
+				<th>所在部门</th>
+				<th>任职岗位</th>
+				<th>就职时间</th>
+				<th>员工状态</th>
+				<th>操作</th>
+			</tr>
+			<c:forEach items="${data}" var="emp">
+				<tr>
+					<td width="75px">${emp.realName}</td>
+					<td width="100px">${emp.phone}</td>
+					<td width="100px">${emp.email}</td>
+					<td width="75px">${emp.dept.depName}</td>
+					<td width="100px">${emp.postion.posName}</td>
+					<td width="150px">${emp.record}</td>
+					<td width="80px">${emp.status==0?'试用期 ':emp.status == 1?'正式员工':'离职员工'}</td>
+					<td width="230px">
+						<input type="hidden" value="${emp.id}" />
+						<a href="javascript:void(0)" name="delEmpl">开除员工</a>&nbsp;&nbsp;
+						<a href="javascript:void(0)" name="emRecords">考勤</a>&nbsp;&nbsp;
+						<a href="javascript:void(0)" name="delEmpl">工资发放</a>&nbsp;&nbsp;
+				 		<a href="javascript:void(0)" name="emplPosDep">职位调动</a>
+					</td>
+				</tr>
+			</c:forEach>
+			
+		</table>
+		<div id="dp" style="display: none;">
+			<table border='1px' ellpadding='5px' cellspacing='0px' align='center' width="720">
+				<caption><h3>你要调动的人员是:<span id="emName"></span></h3></caption>
+				<tr>
+					<td colspan="4" align="center">
+						<input type="hidden" name="empId"/>
+						<select name="departMent" id="departMent">
+						</select>
+						
+						<select name="postion" id="postion">
+						</select>
+						
+						<input type="button" name="sure" value="确认调动"/>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</c:if>
+</div>
 <div id="divTable" style="display: none;">
-	<table border='1px' cellpadding='5px' cellspacing='0px' align='center'>
+	<table border='1px' cellpadding='5px' cellspacing='0px' align='center' name="two">
 		<tr>
 			<th width="50px">应聘者</th>
 			<th width="200px">投递时间</th>

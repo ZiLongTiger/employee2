@@ -26,7 +26,7 @@ public class SalaryServiceImpl implements SalaryService {
 	}
 
 	@Override
-	public List<Salary> getSalaryByMonthAndUid(int uid, String month) {
+	public Salary getSalaryByMonthAndUid(int uid, String month) {
 		return salaryMapper.getSalaryByMonthAndUid(uid, month);
 	}
 
