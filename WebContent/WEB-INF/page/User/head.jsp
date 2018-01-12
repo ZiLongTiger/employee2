@@ -3,6 +3,7 @@
 <script type="text/javascript">
 
 	$(function() {
+		var currentAjax = null;  
 		 $.ajax({
 			   url: "${pageContext.request.contextPath}/user/checkLogin.do",
 			   type: "POST",
@@ -15,10 +16,15 @@
 						$("#spLoginMsg").text(msg);
 						$("#divLoginT").show();
 						$("#divLoginF").hide();
-				   } else{
-					   window.location = "${pageContext.request.contextPath}/user/userGo.do";
-				   } 
+				   }
 			   }
+		 });
+		 
+		 $("a[name='exit']").click(function(){
+			 if(confirm("你确定退出吗？")){
+				 window.location = "${pageContext.request.contextPath}/user/exit.do";
+			 }
+			 return false;
 		 });
 	});
 </script>
@@ -43,7 +49,7 @@
 				
 				<span>|</span>
 				
-		        <a href="javascript:void(0)">退出</a>
+		        <a href="javascript:void(0)" name="exit">退出</a>
 		        
 		        <span>|</span>
 				

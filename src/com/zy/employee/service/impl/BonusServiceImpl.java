@@ -27,11 +27,6 @@ public class BonusServiceImpl implements BonusService {
 	}
 
 	@Override
-	public Bonus getByBonusUid(int uid) {
-		return bonusMapper.getByBonusUid(uid);
-	}
-
-	@Override
 	public int updateBonus(Bonus bonus) {
 		return bonusMapper.updateBonus(bonus);
 	}
@@ -39,6 +34,11 @@ public class BonusServiceImpl implements BonusService {
 	@Override
 	public int saveBonus(Bonus bonus) {
 		return bonusMapper.saveBonus(bonus);
+	}
+
+	@Override
+	public List<Bonus> getByBonusUidAndReward(int uid, String reward) {
+		return bonusMapper.getByBonusUidAndReward(uid, reward);
 	}
 
 }

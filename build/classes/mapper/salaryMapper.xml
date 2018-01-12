@@ -12,14 +12,17 @@
 		select * from salary where month=#{month};
 	</select>
 	
+	<select id="getSalaryByMonthAndUidAndStatus" resultType="Salary" >
+		select * from salary where month=#{month} and uid=#{uid} and status=#{status};
+	</select>
+	
 	<select id="getSalaryByMonthAndUid" resultType="Salary" >
 		select * from salary where month=#{month} and uid=#{uid};
 	</select>
 	
-	
 	<insert id="insertSalary">
-		insert into `salary`(`late`,`evection`,`bonusId`,`early`,`absenteeism`,`uid`,`total`,`baseWage`,`month`) 
-		values (#{late},#{evection},#{bonusId},#{early},#{absenteeism},#{uid},#{total},#{baseWage},#{month});
+		insert into `salary`(`late`,`evection`,`bonusId`,`early`,`absenteeism`,`uid`,`total`,`baseWage`,`month`,`status`) 
+		values (#{late},#{evection},#{bonusId},#{early},#{absenteeism},#{uid},#{total},#{baseWage},#{month},#{status});
 	</insert>
 	
 	<update id="updateSalary">
@@ -60,6 +63,11 @@
 			<if test="month != null and month !=''">
 				`month`= #{month},
 			</if>
+			
+			<if test="status != null and status !=''">
+				`status`= #{status},
+			</if>
+			
 		</set>
 		 where `id`=#{id};
 	</update>

@@ -17,7 +17,7 @@
 	</select>
 	
 	<select id="getByRecordsUid" resultType="Records" >
-		select * from offer where uid=#{uid};
+		select * from records where uid=#{uid};
 	</select>
 	
 	<insert id="insertRecords">

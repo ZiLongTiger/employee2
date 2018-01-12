@@ -63,7 +63,7 @@ $(function(){
 					 		   data: {id:id , offerId:offerId},
 					 		   dataType:"json",
 					 		   success: function(msg){
-					 			  $("#show").html("<table border='1px' cellpadding='5px' cellspacing='0px' width='600px' align='center'>"
+					 			  $("#crr").html("<table border='1px' cellpadding='5px' cellspacing='0px' width='600px' align='center'>"
 					 						+ "<td align='right'>姓名</td>"+
 					 							"<td>"+msg[0].realName+"</td><td align='right'>性别</td><td>"+msg[0].gender+"</td>"+
 					 						"</tr><tr><td align='right'>兴趣爱好</td><td>"+msg[0].hobby+"</td>"+"<td align='right'>年龄</td>"
@@ -84,6 +84,7 @@ $(function(){
 					 					   success: function(msg){
 					 					    if(msg == "success"){
 					 					    	alert("录用成功");
+					 					    	$("#crr").hide();
 					 					    }else if(msg == "no"){
 					 					    	alert("请勿重复操作");
 					 					    }else{
@@ -137,7 +138,7 @@ $(function(){
 	</table>
 </div>
 
-<div id="show"></div>
+<div id="crr"></div>
 <%@ include file="foot.jsp" %>
 </body>
 </html>

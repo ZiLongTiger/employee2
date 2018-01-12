@@ -78,7 +78,6 @@ public class VisitorController {
 	public String checkLogin(Model model) {
 		if(login_user != null) {
 			List<User>list = new ArrayList<User>();
-			System.out.println(login_user);
 			list.add(login_user);
 			Object json = JSON.toJSON(list);
 			return ""+json;
@@ -110,7 +109,6 @@ public class VisitorController {
 		User user = userService.login(name, password);
 		if(user != null && user.getRole() == 0 && user.getUserLock() == 0) {
 			login_user = user;
-			System.out.println("success");
 			return "success";
 		}else if(user != null && user.getRole() == 3 && user.getUserLock() == 0) {
 			login_user = user;
@@ -124,14 +122,12 @@ public class VisitorController {
 	//跳转到主页面
 	@RequestMapping("goMainPage.do")
 	public String goMainPage(Model model) {
-		System.out.println("goMainPage"+login_user);
 		model.addAttribute("user", login_user);
 		return "User/mainPage";
 	}
 	//跳转到新建简历的页面
 	@RequestMapping("create.do")
 	public String writeCurriculumvitae(Model model) {
-		System.out.println("create"+login_user);
 		List<Department> departMent = departmentService.getAllDepartment();
 		String msg= "create";
 		model.addAttribute("msg", msg);
@@ -143,7 +139,6 @@ public class VisitorController {
 	@RequestMapping("changePostion.do")
 	@ResponseBody
 	public String changPostion(HttpServletRequest req) throws IOException {
-		System.out.println("changePostion"+login_user);
 		int depId = Integer.parseInt(req.getParameter("depId"));
 		List<Postion> list = postionService.getByDepId(depId);
 		Object json = JSON.toJSON(list);
@@ -180,7 +175,6 @@ public class VisitorController {
 	//查看自己的简历
 	@RequestMapping("showSelf.do")
 	public String showSelfCurriculumvitae(Model model) {
-		System.out.println("showSelf"+login_user);
 		List<Curriculumvitae> list = curriculumvitaeService.getByUid(login_user.getId());
 		model.addAttribute("SelfCurriculumvitae", list);
 		return "User/selfCurriculumvitae";
@@ -368,7 +362,8 @@ public class VisitorController {
 		if(offer.getInterview() == 4 || offer.getInterview() == 3) {
 			return "error";
 		}
-		if(offer.getConfirm() != null || offer.getConfirm() != "") {
+		if(offer.getConfirm() != null) {
+			System.out.println(offer.getConfirm());
 			return "success";
 		}
 		return "error";
@@ -378,6 +373,12 @@ public class VisitorController {
 	@ResponseBody
 	public String message() {
 		Offer offer = offerService.getByuId(login_user.getId());
+		if(offer.getConfirm() == null) {
+			List<String>list = new ArrayList<String>();
+			list.add("no");
+			Object json = JSON.toJSON(list);
+			return ""+json;
+		}
 		List<Offer>list = new ArrayList<Offer>();
 		list.add(offer);
 		Object json = JSON.toJSON(list);
@@ -448,6 +449,18 @@ public class VisitorController {
 		Object json = JSON.toJSON(list);
 		return ""+json;
 	}
+	//检验用户是否已经打过上班卡
+	@RequestMapping("goCheckClockIn.do")
+	@ResponseBody
+	public String checkClockIn() {
+		Records records = recordsService.getByRecordsUidAndDeleStatus(0, login_user.getId());
+		if(records == null) {
+			return "no";
+		}else {
+			return "yes";
+		}
+	}
+	
 	//上班打卡
 	@RequestMapping("clockIn.do")
 	@ResponseBody
@@ -459,26 +472,26 @@ public class VisitorController {
 		int res = recordsService.insertRecords(records);
 		if(res>0) {
 			if(types.equals("迟到打卡")) {
-				Salary salary = salaryService.getSalaryByMonthAndUid(login_user.getId(), month);
+				Salary salary = salaryService.getSalaryByMonthAndUidAndStatus(login_user.getId(), month,0);
 				if(salary != null) {
 					salary.setLate(salary.getLate()+50);
 					salaryService.updateSalary(salary);
 				}else {
 					Employee employee = employeeService.getByEmployeeByUid(login_user.getId());
 					Department department = departmentService.getByDepId(employee.getDepId());
-					Salary salary2 = new Salary(50, 0, 0, 0, 0, login_user.getId(), 0, department.getBaseWage(), month);
+					Salary salary2 = new Salary(50, 0, 0, 0, 0, login_user.getId(), 0, department.getBaseWage(), month,0);
 					salaryService.insertSalary(salary2);
 				}
 			}
 			if(types.equals("旷工")) {
-				Salary salary = salaryService.getSalaryByMonthAndUid(login_user.getId(), month);
+				Salary salary = salaryService.getSalaryByMonthAndUidAndStatus(login_user.getId(), month,0);
 				if(salary != null) {
 					salary.setAbsenteeism(salary.getAbsenteeism()+100);
 					salaryService.updateSalary(salary);
 				}else {
 					Employee employee = employeeService.getByEmployeeByUid(login_user.getId());
 					Department department = departmentService.getByDepId(employee.getDepId());
-					Salary salary2 = new Salary(0, 0, 0, 0, 100, login_user.getId(), 0, department.getBaseWage(), month);
+					Salary salary2 = new Salary(0, 0, 0, 0, 100, login_user.getId(), 0, department.getBaseWage(), month ,0);
 					salaryService.insertSalary(salary2);
 				}
 			}
@@ -496,34 +509,52 @@ public class VisitorController {
 		Records records = recordsService.getByRecordsUidAndDeleStatus(0, login_user.getId());
 		records.setClockOut(clockOut);
 		records.setTypes(records.getTypes()+","+types);
+		records.setDeletestatus(1);
 		int res = recordsService.updateRecords(records);
 		if(res>0) {
 			if(types.equals("下班早退")) {
-				Salary salary = salaryService.getSalaryByMonthAndUid(login_user.getId(), month);
+				Salary salary = salaryService.getSalaryByMonthAndUidAndStatus(login_user.getId(), month,0);
 				if(salary != null) {
 					salary.setEarly(salary.getEarly()+50);
 					salaryService.updateSalary(salary);
 				}else {
 					Employee employee = employeeService.getByEmployeeByUid(login_user.getId());
 					Department department = departmentService.getByDepId(employee.getDepId());
-					Salary salary2 = new Salary(0, 0, 0, 50, 0, login_user.getId(), 0, department.getBaseWage(), month);
+					Salary salary2 = new Salary(0, 0, 0, 50, 0, login_user.getId(), 0, department.getBaseWage(), month,0);
 					salaryService.insertSalary(salary2);
 				}
 			}
 			if(types.equals("旷工")) {
-				Salary salary = salaryService.getSalaryByMonthAndUid(login_user.getId(), month);
+				Salary salary = salaryService.getSalaryByMonthAndUidAndStatus(login_user.getId(), month,0);
 				if(salary != null) {
 					salary.setAbsenteeism(salary.getAbsenteeism()+100);
 					salaryService.updateSalary(salary);
 				}else {
 					Employee employee = employeeService.getByEmployeeByUid(login_user.getId());
 					Department department = departmentService.getByDepId(employee.getDepId());
-					Salary salary2 = new Salary(0, 0, 0, 0, 100, login_user.getId(), 0, department.getBaseWage(), month);
+					Salary salary2 = new Salary(0, 0, 0, 0, 100, login_user.getId(), 0, department.getBaseWage(), month,0);
 					salaryService.insertSalary(salary2);
 				}
 			}
 			return "success";
 		}
 		return "error";
+	}
+	
+	//查看自己的打卡记录
+	@RequestMapping("showSelfRecords.do")
+	@ResponseBody
+	public String showSelfRecords() {
+		System.out.println(login_user);
+		List<Records> list = recordsService.getByRecordsUid(login_user.getId());
+		Object json = JSON.toJSON(list);
+		return ""+json;
+	}
+	
+	//用户退出
+	@RequestMapping("exit.do")
+	public String exit() {
+		login_user = null;
+		return "redirect:userGo.do";
 	}
 }

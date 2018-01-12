@@ -12,8 +12,8 @@
 		select * from bonus where id=#{id};
 	</select>
 	
-	<select id="getByBonusUid" resultType="Offer" >
-		select * from bonus where uid=#{uid}  where deletestatus=0;
+	<select id="getByBonusUidAndReward" resultType="Bonus" >
+		select * from bonus where uid=#{uid}  and reward=#{reward};
 	</select>
 	
 	<insert id="saveBonus">

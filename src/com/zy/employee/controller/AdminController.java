@@ -15,15 +15,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSON;
+import com.zy.employee.entity.Bonus;
 import com.zy.employee.entity.Curriculumvitae;
 import com.zy.employee.entity.Department;
 import com.zy.employee.entity.EmDepPos;
 import com.zy.employee.entity.Employee;
 import com.zy.employee.entity.Employee2;
+import com.zy.employee.entity.EmployeeRecords;
 import com.zy.employee.entity.ManagerOffer;
 import com.zy.employee.entity.Offer;
 import com.zy.employee.entity.Postion;
+import com.zy.employee.entity.Records;
 import com.zy.employee.entity.Recruit;
+import com.zy.employee.entity.Salary;
+import com.zy.employee.entity.SalaryEnd;
 import com.zy.employee.entity.User;
 import com.zy.employee.service.BonusService;
 import com.zy.employee.service.CurriculumvitaeService;
@@ -75,6 +80,13 @@ public class AdminController {
 	
 	@RequestMapping("adminGo.do")
 	public String goPage() {
+		return "admin/login";
+	}
+	
+	//用户退出
+	@RequestMapping("exit.do")
+	public String exitAdmin() {
+		loginUser = null;
 		return "admin/login";
 	}
 	
@@ -589,5 +601,48 @@ public class AdminController {
 		return "error";
 	}
 	
+	//查看单个员工的考情记录
+	@RequestMapping("queryRecordsByEid.do")
+	@ResponseBody
+	public String queryRecordsByEid(HttpServletRequest req) {
+		int id = Integer.parseInt(req.getParameter("employeeId"));
+		Employee emp = employeeService.getByEmployeeId(id);
+		List<Records> list = recordsService.getByRecordsUid(emp.getUid());
+		List<EmployeeRecords> rlist = new ArrayList<EmployeeRecords>();
+		EmployeeRecords EmpR = new EmployeeRecords(emp.getRealName(), list);
+		rlist.add(EmpR);
+		Object json = JSON.toJSON(rlist);
+		return ""+json;
+	}
+	
+	//查看员工本月的薪水
+	@RequestMapping("showEmploySalary.do")
+	@ResponseBody
+	public String showEmploySalary(HttpServletRequest req) {
+		int employeeId = Integer.parseInt(req.getParameter("employeeId"));
+		String month = req.getParameter("month");
+		Employee emp = employeeService.getByEmployeeId(employeeId);
+		Salary salary = salaryService.getSalaryByMonthAndUid(emp.getUid(), month);
+		if(salary != null) {
+			List<SalaryEnd>list = new ArrayList<SalaryEnd>();
+			List<Bonus> list2 = bonusService.getByBonusUidAndReward(emp.getUid(), month);
+			SalaryEnd salaryEnd = new SalaryEnd(salary, emp, list2);
+			list.add(salaryEnd);
+			Object json = JSON.toJSON(list);
+			return ""+json;
+		}else {
+			List<String>list = new ArrayList<String>();
+			list.add("no");
+			Object json = JSON.toJSON(list);
+			return ""+json;
+		}
+	}
+	
+	//工资发放
+	@RequestMapping("endSalary.do")
+	@ResponseBody
+	public String salaryGo(HttpServletRequest req) {
+		return "";
+	}
 	
 }

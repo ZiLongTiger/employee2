@@ -31,6 +31,10 @@ $(function(){
 			  url:url,
 			  dataType: "json",
 			  success:function(msg){
+				 if(msg[0] == "no"){
+					 alert("还没有面试通知");
+					 return;
+				 }
 				 if(msg.length > 0){
 					 $("#divTable").show();
 					 $("table tr:gt(0)").empty();

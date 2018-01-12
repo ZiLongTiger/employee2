@@ -62,7 +62,7 @@
 	<tr>
 		<td align="right" valign="middle">职位需求:</td>
 		<td>
-			<textarea rows="4" cols="40" style="resize: none" name="jobReq" requied="requied"></textarea>
+			<textarea rows="4" cols="40" style="resize: none" name="jobReq" required="required"></textarea>
 			<!-- <input type="text" name="jobReq"/> -->
 		</td>
 	</tr>
@@ -70,7 +70,7 @@
 	<tr>
 		<td align="right" valign="middle">工作时间:</td>
 		<td>
-			<textarea rows="4" cols="40" style="resize: none" name="workHours" requied="requied"></textarea>
+			<textarea rows="4" cols="40" style="resize: none" name="workHours" required="required"></textarea>
 		<!-- 	<input type="text" name="workHours"/> -->
 		</td>
 	</tr>

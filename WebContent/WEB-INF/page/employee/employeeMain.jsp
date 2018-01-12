@@ -111,7 +111,7 @@ $(function(){
 			    		    		     $(msg).each(function(){
 			    		    		    	 var emplName = this.realName;
 			    		    		    	/*  var status = (this.status == 0?"试用期员工":this.status == 1?"正式员工":"离职员工"); */
-			    		    		    	 $("#showEmployee").append("<span>"+emplName+"</span>");
+			    		    		    	 $("#showEmployee").append("<span>"+emplName+"</span><br/>");
 			    		    		     });
 			    		    		   }
 			    		    		});
@@ -129,6 +129,15 @@ $(function(){
 		$("#showEmployee").empty();
 		$("#showSelf").empty();
 		$("#btns").show();
+		$.ajax({
+			 type: "POST",
+			 url: "${pageContext.request.contextPath}/user/goCheckClockIn.do",
+			 success:function(msg){
+				 if(msg == "yes"){
+					 $("input[name='clockIn']").attr("disabled",true); 
+				 }
+			 }
+		});
 	});
 	$("input[name='clockIn']").click(function(){
 		var date = new Date();
@@ -148,7 +157,7 @@ $(function(){
 		}else if(hour-9 == 0){
 			if(minute-0==0){
 				alert("打卡成功，祝你工作顺利。");
-				var types = "正常打卡";
+				var types = "下班正常打卡";
 				clockIn(workShift,types);
 			}else if(minute-0 > 0){
 				alert("迟到打卡成功，祝你工作顺利。");
@@ -156,15 +165,30 @@ $(function(){
 				clockIn(workShift,types);
 			}
 			
+		}else if(hour-9 > 0 && hour-9 < 3){
+			alert("迟到打卡成功，祝你工作顺利。");
+			var types = "迟到打卡";
+			clockIn(workShift,types);
 		}else{
 			alert("新的一天，早起的鸟儿有虫吃");
-			var types = "正常打卡";
+			var types = "上班正常打卡";
 			clockIn(workShift,types);
 		}
 		
 	});
 	
 	$("input[name='clockOut']").click(function(){
+		$.ajax({
+			 type: "POST",
+			 url: "${pageContext.request.contextPath}/user/goCheckClockIn.do",
+			 success:function(msg){
+				 if(msg == "no"){
+					 alert("请先上班打卡");
+					 return; 
+				 }
+				
+			 }
+		});
 		var date = new Date();
 		var year = date.getFullYear();
 		var month = date.getMonth()+1;
@@ -189,11 +213,35 @@ $(function(){
 			return false;
 		}else{
 			alert("辛苦一天了，愿你晚上有个好梦。");
-			var types = "正常打卡";
+			var types = "下班正常打卡";
 			clockOut(colsingTime,types);
 		}
-		
-		
+	});
+	
+	$("a[name='showReCords']").click(function(){
+		var url = "${pageContext.request.contextPath}/user/showSelfRecords.do";
+		$.ajax({
+			   type: "POST",
+			   url: url,
+			   dataType:"json",
+			   success: function(msg){
+				  $("table[name='showRec'] tr:gt(0)").empty();
+				  var trs = [];
+				  $(msg).each(function(){
+					     var clockIn = this.clockIn;
+		    			 var clockOut = this.clockOut;
+		    			 var types = this.types;
+		    			 var tds = [];
+						 tds.push("<td>" + clockIn + "</td>");
+						 tds.push("<td>" + (clockOut == null ?"未打卡":clockOut) + "</td>");
+						 tds.push("<td>" + types + "</td>");
+						 var tr = "<tr>" + tds.join("") + "</tr>";
+						 trs.push(tr);
+				  });
+				  $("table[name='showRec']").append(trs.join(""));
+		    	  $("#showSelfRecords").show();
+			   }
+			});
 	});
 });
 
@@ -206,7 +254,9 @@ function clockOut(time,types){
 		   success: function(msg){
 			   if(msg == "success"){
 			    	 $("input[name='clockIn']").attr("disabled",false); 
-			     }
+			   }else if(msg == "no"){
+				   alert("别闹你还没打上班卡呢");
+			   }
 		   }
 		});
 }
@@ -239,9 +289,19 @@ function clockIn(time,types){
 </ul>&nbsp;&nbsp;
 <a href="javascript:void(0)" name="selfMsg">查看个人信息</a>&nbsp;&nbsp;&nbsp;&nbsp;
 <a href="javascript:void(0)" name="showDepAndPos">部门职位</a>&nbsp;&nbsp;&nbsp;&nbsp;
-<a href="javascript:void(0)" name="showDepAndPos">考勤记录</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="javascript:void(0)" name="showReCords">考勤记录</a>&nbsp;&nbsp;&nbsp;&nbsp;
 <!-- <a href="">培训</a>&nbsp; -->
-<a href="javascript:void(0)" name="showSalary">薪资</a>
+<a href="javascript:void(0)" name="showSalary">薪资</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="javascript:void(0)" name="showBouns">查看奖惩详情</a>
+</div>
+<div id="showSelfRecords" style="display: none;">
+	<table border="1px" cellpadding="5px" cellspacing="0px" align="center" name="showRec">
+		<tr>
+			<th width="150px">上班时间</th>
+			<th width="150px">下班时间</th>
+			<th width="150px">打卡类型</th>
+		</tr>
+	</table>
 </div>
 <div id="showOne"></div>
 <div id="show"></div>

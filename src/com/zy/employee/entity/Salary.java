@@ -6,7 +6,7 @@ public class Salary{
 	
 	private double late;//迟到
 	
-	private double evection;//出差
+	private double evection;//社保
 	
 	private int bonusId;//奖金
 	
@@ -21,9 +21,26 @@ public class Salary{
 	private double baseWage;//基本工资
 	
 	private String month;
+	
+	private int status;
+
+	public Salary(double late, double evection, int bonusId, double early, double absenteeism, int uid, double total,
+			double baseWage, String month, int status) {
+		super();
+		this.late = late;
+		this.evection = evection;
+		this.bonusId = bonusId;
+		this.early = early;
+		this.absenteeism = absenteeism;
+		this.uid = uid;
+		this.total = total;
+		this.baseWage = baseWage;
+		this.month = month;
+		this.status = status;
+	}
 
 	public Salary(int id, double late, double evection, int bonusId, double early, double absenteeism, int uid,
-			double total, double baseWage, String month) {
+			double total, double baseWage, String month, int status) {
 		super();
 		this.id = id;
 		this.late = late;
@@ -35,20 +52,7 @@ public class Salary{
 		this.total = total;
 		this.baseWage = baseWage;
 		this.month = month;
-	}
-
-	public Salary(double late, double evection, int bonusId, double early, double absenteeism, int uid, double total,
-			double baseWage, String month) {
-		super();
-		this.late = late;
-		this.evection = evection;
-		this.bonusId = bonusId;
-		this.early = early;
-		this.absenteeism = absenteeism;
-		this.uid = uid;
-		this.total = total;
-		this.baseWage = baseWage;
-		this.month = month;
+		this.status = status;
 	}
 
 	public Salary() {
@@ -133,6 +137,14 @@ public class Salary{
 
 	public void setMonth(String month) {
 		this.month = month;
+	}
+	
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
 	}
 
 	@Override

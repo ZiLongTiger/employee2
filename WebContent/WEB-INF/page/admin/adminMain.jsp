@@ -77,7 +77,7 @@ $(function(){
 								   				 var name = this.realName;
 								   				 var status = this.status;
 								   				 var sta = (status == 0?"试用期员工":status == 1?"正式员工":"离职员工");
-								   				 $("#showEmployee").append("<span>"+name+ " " + sta + "</span>"); 
+								   				 $("#showEmployee").append("<span>"+name+ " " + sta + "</span><br/>"); 
 								   			 });
 							   			}else{
 							   				$("#showEmployee").empty();
@@ -167,7 +167,7 @@ $(function(){
 		   success: function(msg){
 			 var show = $("#divTable");
 			 show.show();
-			 $("table tr:gt(0)").empty();
+			 $("table[name='two'] tr:gt(0)").empty();
 			 var trs = [];
 			 $(msg).each(function(){
 				 var id = this.id;
@@ -217,7 +217,6 @@ $(function(){
 		 		var id = $(this).prev().val();
 		 		var offerId = $(this).prev().prev().val();
 		 		var interview = $(this).parent().prev().text();
-		 		var confirm = $(this).prev().prev().prev().val();
 		 		var show = $("#showCurr");
 		 		$.ajax({
 		 		   type: "POST",
@@ -225,7 +224,7 @@ $(function(){
 		 		   data: {id:id , offerId:offerId},
 		 		   dataType:"json",
 		 		   success: function(msg){
-		 			   
+		 			  
 		 			   show.html("<table border='1px' cellpadding='5px' cellspacing='0px' width='600px' align='center'>"
 		 						+ "<td align='right'>姓名</td>"+
 		 							"<td>"+msg[0].realName+"</td><td align='right'>性别</td><td>"+msg[0].gender+"</td>"+
@@ -238,42 +237,48 @@ $(function(){
 		 						"</tr><tr><td align='right' valign='middle'>自我描述</td><td colspan='3'>"+
 		 						 msg[0].evaluation+ "</td></tr><tr><td colspan='4' align='center'><a name='mesg'>通知其面试</a></td></tr></table>");
 		 		   		$("a[name='mesg']").click(function(){
-		 		   			if(interview == "面试通过" || interview == "面试失败"){
-		 		   				alert("请勿重复操作，此人已面试过了");
-		 		   				return;
-		 		   			}
-		 		   			if(confirm != ""){
-			 		   			alert("已经通知其面试了，请勿重复操作");
-		 		   				return;
-		 		   			}
-		 		   			$("#mianshi").html("<table border='1px' cellpadding='5px' cellspacing='0px' width='600px' align='center'>"
-		 		   					+"<tr><td colspan='4' align='center'><input type='datetime-local' name='date' requied='requied'>"
-		 		   					+"</td></tr></table>");
-		 		   			$("input[name='date']").blur(function(){
-		 		   				var date = $(this).val();
-		 		   				var dateTime = date.split("T")[0]+" "+date.split("T")[1];
-		 		   				var date1 = new Date(dateTime);
-		 		   				var date2 = new Date();
-		 		   				if(date1 < date2){
-		 		   					alert("您要求的面试时间难以执行。");
-		 		   					return;
-		 		   				}else if(date1>date2){
-		 		   					var url="${pageContext.request.contextPath}/admin/giveAnInterview.do";
-			 		   				$.ajax({
-			 		   				  type: "post",
-			 		   				  url: url,
-			 		   				  data:{date1:dateTime,offerId:offerId},
-			 		   				  dataType: "text",
-			 		   				  success:function(msg){
-			 		   					  if(msg == "success"){
-			 		   						 alert("面试通知已发出"); 
-			 		   					  }else{
-			 		   						  alert("面试通知发送失败");
-			 		   					  }
-			 		   				  }
-			 		   				});
-		 		   				}
-		 		   			});
+			 		   		$.ajax({
+			 		   		   type: "POST",
+			 		   		   url: "${pageContext.request.contextPath}/admin/checkMessage.do",
+			 		   		   success: function(msg){
+			 		   		     if(msg == "error"){
+			 		   		    	$("#mianshi").html("<table border='1px' cellpadding='5px' cellspacing='0px' width='600px' align='center'>"
+				 		   					+"<tr><td colspan='4' align='center'><input type='datetime-local' name='date' requied='requied'>"
+				 		   					+"<input type='button' name='dataSuer' value='确认面试时间'></td></tr></table>");
+			 		   		    $("input[name='dataSuer']").click(function(){
+			 		   				var date = $("input[name='date']").val();
+			 		   				var dateTime = date.split("T")[0]+" "+date.split("T")[1];
+			 		   				var date1 = new Date(dateTime);
+			 		   				var date2 = new Date();
+			 		   				if(date1 < date2){
+			 		   					alert("您要求的面试时间难以执行。");
+			 		   					return;
+			 		   				}else if(date1>date2){
+			 		   					var url="${pageContext.request.contextPath}/admin/giveAnInterview.do";
+				 		   				$.ajax({
+				 		   				  type: "post",
+				 		   				  url: url,
+				 		   				  data:{date1:dateTime,offerId:offerId},
+				 		   				  dataType: "text",
+				 		   				  success:function(msg){
+				 		   					  if(msg == "success"){
+				 		   						 alert("面试通知已发出"); 
+				 		   						 $("#mianshi").hide();
+				 		   					  }else{
+				 		   						  alert("面试通知发送失败");
+				 		   					  }
+				 		   				  }
+				 		   				});
+			 		   				}
+			 		   			});
+			 		   		     }else if(msg == "success"){
+				 		   		     alert("已通知其面试了。");
+			 		   		    	 $("#mianshi").hide();
+			 		   		     }
+			 		   		   }
+			 		   		});
+		 		   			
+		 		   			
 		 		   		});
 		 		   }
 		 		});
@@ -286,24 +291,31 @@ $(function(){
 		var url = "${pageContext.request.contextPath}/admin/delEmpl.do";
 		var id = $(this).prev().val();
 		var tr = $(this).parent().parent();
-		var emName = $(this).parent().prev().prev().prev().prev().prev().prev().text();
-		$.ajax({
-			   type: "POST",
-			   url: url,
-			   data: {id:id},
-			   success: function(msg){
-			     if(msg == "success"){
-			    	 alert("员工"+emName+"已被开除,记得将他最近的工资结算清楚");
-			    	 tr.remove();
-			     }else{
-			    	 alert("开除失败");
-			     }
-			   }
-			});
+		var emName = $(this).parent().prev().prev().prev().prev().prev().prev().prev().text();
+		if(confirm("你确定开除员工"+emName+"吗？")){
+			$.ajax({
+				   type: "POST",
+				   url: url,
+				   data: {id:id},
+				   success: function(msg){
+				     if(msg == "success"){
+				    	 alert("员工"+emName+"已被开除,记得将他最近的工资结算清楚");
+				    	 tr.remove();
+				     }else{
+				    	 alert("开除失败");
+				     }
+				   }
+				});
+		}
+		return false;
+		
 	});
 	
+	//员工调动
 	$("a[name='emplPosDep']").click(function(){
-		var id = $(this).prev().prev().val();
+		$("#showRecords").hide();
+		$("#divSalary").hide();
+		var id = $(this).prev().prev().prev().prev().val();
 		var url = "${pageContext.request.contextPath}/admin/emplGo.do";
 		$.ajax({
 			   type: "POST",
@@ -317,10 +329,10 @@ $(function(){
 					    $("#emName").text(emp.realName);
 					    $("input[name='empId']").val(emp.id);
 					    var depId = emp.depId;
-					    var possId = emp.depId;
+					    var possId = emp.posId;
+					    $("#departMent").empty();
 					    $(dept).each(function(){
 					    	var deptId = this.id;
-					   		
 					    	var depName = this.depName;
 					    	if(depId == deptId){
 					    		$("#departMent").append("<option value='"+deptId+"' selected='selected'>"+depName+"</option>");
@@ -330,13 +342,15 @@ $(function(){
 					    	
 					    });
 				    	var pos = this.posList;
+				    	$("#postion2").empty();
 				    	$(pos).each(function(){
 						    var posId = this.id;
+						   
 						    var posName = this.posName;
 						    if(possId == posId){
-					    		$("#postion").append("<option value='"+posId+"' selected='selected'>"+posName+"</option>");
+					    		$("#postion2").append("<option value='"+posId+"' selected='selected'>"+posName+"</option>");
 					    	}else{
-					    		$("#postion").append("<option value='"+posId+"'>"+posName+"</option>");
+					    		$("#postion2").append("<option value='"+posId+"'>"+posName+"</option>");
 					    	}
 						});
 				   });
@@ -355,9 +369,8 @@ $(function(){
 			   data: {depId:deptId},
 			   dataType:"json",
 			   success: function(msg){
-				 var postion = $("#postion");
+				 var postion = $("#postion2");
 				 postion.empty();
-				 postion.attr("disabled",false);
 				 for(var i = 0; i < msg.length; i++){
 					 postion.append("<option value='"+msg[i].id+"'>"+msg[i].posName+"</option>");
 				 }
@@ -369,7 +382,6 @@ $(function(){
 		var eid = $(this).prev().prev().prev().val();
 		var depId = $(this).prev().prev().val();
 		var posId = $(this).prev().val();
-		alert(eid+""+depId + "" + posId);
 		$.ajax({
 			   type: "POST",
 			   url: "${pageContext.request.contextPath}/admin/empChangeDP.do",
@@ -382,6 +394,102 @@ $(function(){
 				   }
 			   }
 			});
+	});
+	//查看考勤
+	$("a[name='emRecords']").click(function(){
+		$("#dp").hide();
+		$("#divSalary").hide();
+		var employeeId = $(this).prev().prev().val();
+		$.ajax({
+			   type: "POST",
+			   url: "${pageContext.request.contextPath}/admin/queryRecordsByEid.do",
+			   data: {employeeId:employeeId},
+			   dataType:"json",
+			   success: function(msg){
+			    	$(msg).each(function(){
+			    		var name = this.name;
+			    		$("#emName2").text(name);
+			    		var recordList = this.recList;
+			    		$("table[name='first'] tr:gt(0)").empty();
+						var trs = [];
+			    		$(recordList).each(function(){
+			    			var clockIn = this.clockIn;
+			    			var clockOut = this.clockOut;
+			    			var types = this.types;
+			    			 var tds = [];
+							 tds.push("<td>" + clockIn + "</td>");
+							 tds.push("<td>" + (clockOut == null ?"未打卡":clockOut) + "</td>");
+							 tds.push("<td>" + types + "</td>");
+							 var tr = "<tr>" + tds.join("") + "</tr>";
+							 trs.push(tr);
+			    		});
+			    		 $("table[name='first']").append(trs.join(""));
+			    		 $("#showRecords").show();
+			    	});
+			   }
+			});
+	});
+	
+	//查看本月员工工资详情
+	$("a[name='salary']").click(function(){
+		$("#showRecords").hide();
+		var date = new Date();
+		var year = date.getFullYear();
+		var month = date.getMonth()+1;
+		var day = date.getDate();
+		var employeeId = $(this).prev().prev().prev().val();
+		var month= year+"-"+month;
+		var url = "${pageContext.request.contextPath}/admin/showEmploySalary.do";
+		$.ajax({
+			type:"POST",
+			url:url,
+			data:{employeeId:employeeId,month:month},
+			dataType:"json",
+			success:function(msg){
+				if(msg[0] == "no"){
+					alert("本月还没有该员工的工资信息。");
+				}else{
+					$("table[name='three'] tr:gt(0)").empty();
+					var trs = [];
+					$(msg).each(function(){
+						var salary = this.salary;
+						var employee = this.employee;
+						var bounsList = this.list;
+						var bouns = 0;
+						$(bounsList).each(function(){
+							if(this.balance == 1){
+								bouns += this.bonus;
+							}else{
+								bonus -= this.bonus;
+							}
+						});
+						$("#emName3").text(employee.realName);
+						var tds = [];
+						tds.push("<td>" + salary.baseWage + "</td>");
+						tds.push("<td>" + bouns + "</td>");
+						tds.push("<td>" + "-"+salary.late + "</td>");
+						tds.push("<td>" + "-"+salary.early + "</td>");
+						tds.push("<td>" + "-"+salary.absenteeism + "</td>");
+						tds.push("<td>" + salary.evection + "</td>");
+						tds.push("<td>" + (salary.baseWage+bouns-salary.late-salary.early-salary.absenteeism+salary.evection)+ "</td>");
+						tds.push("<td><a name='endSalary'>工资发放</a></td>");
+						var tr = "<tr>" + tds.join("") + "</tr>";
+						trs.push(tr);
+					});
+					$("table[name='three']").append(trs.join(""));
+		    		$("#divSalary").show();
+		    		$("a[name='endSalary']").click(function(){
+		    			if(day < 10){
+		    				alert("每个月的10号发放工资，现在还没到工资方法的日期。");
+		    			}else if(day>10){
+		    				alert("每个月的10号发放工资，已经过了发放工资方法的日期。");
+		    			}else{
+		    				//工资结算
+		    			}
+		    		});
+				}
+			}
+		});
 	});
 });
 </script>
@@ -431,13 +539,42 @@ $(function(){
 						<input type="hidden" value="${emp.id}" />
 						<a href="javascript:void(0)" name="delEmpl">开除员工</a>&nbsp;&nbsp;
 						<a href="javascript:void(0)" name="emRecords">考勤</a>&nbsp;&nbsp;
-						<a href="javascript:void(0)" name="delEmpl">工资发放</a>&nbsp;&nbsp;
+						<a href="javascript:void(0)" name="salary">查看本月员工工资</a>&nbsp;&nbsp;
 				 		<a href="javascript:void(0)" name="emplPosDep">职位调动</a>
 					</td>
 				</tr>
 			</c:forEach>
-			
 		</table>
+		
+		<div id="divSalary" style="display: none;">
+			<table border='1px' cellpadding='5px' cellspacing='0px' align='center' name="three">
+				<caption><h3>你要查看的员工是:<span id="emName3"></span></h3></caption>
+				<tr>
+					<th width="70px">基本薪资</th>
+					<th width="70px">奖惩总计</th>
+					<th width="70px">员工迟到</th>
+					<th width="70px">员工早退</th>
+					<th width="70px">员工旷工</th>
+					<th width="70px">社保</th>
+					<th width="70px">总工资</th>
+					<th width="70px">操作</th>
+				</tr>
+			</table>
+		</div>
+		
+		
+		<div id="showRecords" style="display: none;">
+			
+			<table border='1px' ellpadding='5px' cellspacing='0px' align='center' width="720" name="first">
+				<caption><h3>你查看的人员是:<span id="emName2"></span></h3></caption>
+；				<tr>
+					<th>上班时间</th>
+					<th>下班时间</th>
+					<th>打卡类型</th>
+				</tr>
+			</table>
+		</div>
+		
 		<div id="dp" style="display: none;">
 			<table border='1px' ellpadding='5px' cellspacing='0px' align='center' width="720">
 				<caption><h3>你要调动的人员是:<span id="emName"></span></h3></caption>
@@ -447,7 +584,7 @@ $(function(){
 						<select name="departMent" id="departMent">
 						</select>
 						
-						<select name="postion" id="postion">
+						<select name="postion" id="postion2">
 						</select>
 						
 						<input type="button" name="sure" value="确认调动"/>
@@ -457,6 +594,7 @@ $(function(){
 		</div>
 	</c:if>
 </div>
+
 <div id="divTable" style="display: none;">
 	<table border='1px' cellpadding='5px' cellspacing='0px' align='center' name="two">
 		<tr>

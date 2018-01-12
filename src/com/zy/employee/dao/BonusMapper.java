@@ -2,6 +2,8 @@ package com.zy.employee.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.zy.employee.entity.Bonus;
 
 public interface BonusMapper {
@@ -10,7 +12,7 @@ public interface BonusMapper {
 	
 	public Bonus getByBonusId(int id);
 	
-	public Bonus getByBonusUid(int uid);
+	public List<Bonus> getByBonusUidAndReward(@Param(value="uid")int uid,@Param(value="reward")String reward);
 	
 	public int updateBonus(Bonus bonus);
 	

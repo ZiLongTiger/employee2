@@ -15,31 +15,8 @@ public class Bonus{
 	private int uid;
 	
 	private int deletestatus;//删除状态 0表示未删除  1表示已删除
-
-	public Bonus(int id, double bonus, String createTime, String introduce, String reward, int uid, int deletestatus) {
-		super();
-		this.id = id;
-		this.bonus = bonus;
-		this.createTime = createTime;
-		this.introduce = introduce;
-		this.reward = reward;
-		this.uid = uid;
-		this.deletestatus = deletestatus;
-	}
-
-	public Bonus(double bonus, String createTime, String introduce, String reward, int uid, int deletestatus) {
-		super();
-		this.bonus = bonus;
-		this.createTime = createTime;
-		this.introduce = introduce;
-		this.reward = reward;
-		this.uid = uid;
-		this.deletestatus = deletestatus;
-	}
-
-	public Bonus() {
-		super();
-	}
+	
+	private int balance;//将罚标志  1奖  2罚
 
 	public int getId() {
 		return id;
@@ -97,9 +74,40 @@ public class Bonus{
 		this.deletestatus = deletestatus;
 	}
 
-	@Override
-	public String toString() {
-		return "Bonus [id=" + id + ", bonus=" + bonus + ", createTime=" + createTime + ", introduce=" + introduce
-				+ ", reward=" + reward + ", uid=" + uid + ", deletestatus=" + deletestatus + "]";
+	public int getBalance() {
+		return balance;
+	}
+
+	public void setBalance(int balance) {
+		this.balance = balance;
+	}
+
+	public Bonus(int id, double bonus, String createTime, String introduce, String reward, int uid, int deletestatus,
+			int balance) {
+		super();
+		this.id = id;
+		this.bonus = bonus;
+		this.createTime = createTime;
+		this.introduce = introduce;
+		this.reward = reward;
+		this.uid = uid;
+		this.deletestatus = deletestatus;
+		this.balance = balance;
+	}
+
+	public Bonus(double bonus, String createTime, String introduce, String reward, int uid, int deletestatus,
+			int balance) {
+		super();
+		this.bonus = bonus;
+		this.createTime = createTime;
+		this.introduce = introduce;
+		this.reward = reward;
+		this.uid = uid;
+		this.deletestatus = deletestatus;
+		this.balance = balance;
+	}
+
+	public Bonus() {
+		super();
 	}
 }

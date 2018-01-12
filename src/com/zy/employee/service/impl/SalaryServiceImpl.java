@@ -39,4 +39,9 @@ public class SalaryServiceImpl implements SalaryService {
 	public int updateSalary(Salary salary) {
 		return salaryMapper.updateSalary(salary);
 	}
+
+	@Override
+	public Salary getSalaryByMonthAndUidAndStatus(int uid, String month, int status) {
+		return salaryMapper.getSalaryByMonthAndUidAndStatus(uid, month, status);
+	}
 }
