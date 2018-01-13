@@ -10,13 +10,13 @@ public class Bonus{
 	
 	private String introduce;//说明
 	
-	private String reward;//奖励，罚款 时间
+	private String reward;//奖励，3异议,罚款 时间
 	
 	private int uid;
 	
 	private int deletestatus;//删除状态 0表示未删除  1表示已删除
 	
-	private int balance;//将罚标志  1奖  2罚
+	private int balance;//将罚标志  1奖  2罚  3异议
 
 	public int getId() {
 		return id;

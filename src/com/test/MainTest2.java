@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.zy.employee.dao.BonusMapper;
 import com.zy.employee.dao.CurriculumvitaeMapper;
 import com.zy.employee.dao.OfferMapper;
 import com.zy.employee.dao.RecruitMapper;
@@ -25,6 +26,14 @@ public class MainTest2 {
 	
 	@Autowired
 	private OfferMapper offerMapper;
+	
+	@Autowired
+	private BonusMapper bm;
+	
+	@Test
+	public void textBm() {
+		System.out.println(bm.getAllBonus());
+	}
 	
 	
 	@Test

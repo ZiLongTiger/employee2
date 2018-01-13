@@ -8,6 +8,10 @@
 		select * from salary;
 	</select>
 	
+	<select id="getEmployeeSalary" resultType="Salary" >
+		select * from salary where uid=#{uid};
+	</select>
+	
 	<select id="getSalaryByMonth" resultType="Salary" >
 		select * from salary where month=#{month};
 	</select>

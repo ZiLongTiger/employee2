@@ -8,6 +8,10 @@
 		select * from bonus;
 	</select>
 	
+	<select id="getBonusByUid" resultType="Bonus" >
+		select * from bonus where uid=#{uid};
+	</select>
+	
 	<select id="getByBonusId" resultType="Bonus" >
 		select * from bonus where id=#{id};
 	</select>
@@ -17,11 +21,11 @@
 	</select>
 	
 	<insert id="saveBonus">
-		insert into `bonus`(`bonus`,`createTime`,`introduce`,`reward`,`uid`,`deletestatus`)
-		values (#{bonus},#{createTime},#{introduce},#{reward},#{uid},#{deletestatus});
+		insert into `bonus`(`bonus`,`createTime`,`introduce`,`reward`,`uid`,`deletestatus`,`balance`)
+		values (#{bonus},#{createTime},#{introduce},#{reward},#{uid},#{deletestatus},#{balance});
 	</insert>
 	
-	<update id="updateOffer">
+	<update id="updateBonus">
 		update `bonus`
 		<set>
 			<if test="bonus != null and bonus !=''">
@@ -36,10 +40,6 @@
 				`introduce`= #{introduce},
 			</if>
 			
-			<if test="interview != null and interview !=''">
-				`interview`= #{interview},
-			</if>
-			
 			<if test="reward != null and reward !=''">
 				`reward`= #{reward},
 			</if>
@@ -50,6 +50,10 @@
 			
 			<if test="deletestatus != null and deletestatus !=''">
 				`deletestatus`= #{deletestatus},
+			</if>
+			
+			<if test="balance != null and balance !=''">
+				`balance`= #{balance},
 			</if>
 		</set>
 		 where `id`=#{id};

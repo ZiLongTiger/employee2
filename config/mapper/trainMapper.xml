@@ -4,54 +4,55 @@
 
 <mapper namespace="com.zy.employee.dao.TrainMapper">
 	
-	<select id="getAllBonus" resultType="Bonus" >
-		select * from bonus;
+	<select id="getById" resultType="Train" >
+		select * from train where id=#{id};
 	</select>
 	
-	<select id="getByBonusId" resultType="Bonus" >
-		select * from bonus where id=#{id};
+	<select id="getByUId" resultType="Train">
+		select * from train where uid=#{uid};
 	</select>
 	
-	<select id="getByBonusUid" resultType="Offer" >
-		select * from bonus where uid=#{uid}  where deletestatus=0;
+	<select id="getByTitle" resultType="Train" >
+		select * from train where title=#{title};
 	</select>
 	
-	<insert id="saveBonus">
-		insert into `bonus`(`bonus`,`createTime`,`introduce`,`reward`,`uid`,`deletestatus`)
-		values (#{bonus},#{createTime},#{introduce},#{reward},#{uid},#{deletestatus});
+	<select id="getAllTrain" resultType="Train">
+		select * from train;
+	</select>
+	
+	<insert id="insertTrain">
+		insert into `train`(`title`,`createTime`,`context`,`uid`,`status`) 
+		values (#{title},#{createTime},#{context},#{uid},#{status});
 	</insert>
 	
-	<update id="updateOffer">
-		update `bonus`
+	<update id="updateTrain">
+		update `Train`
 		<set>
-			<if test="bonus != null and bonus !=''">
-				`bonus`= #{bonus},
+			<if test="title != null and title !=''">
+				`title`= #{title},
 			</if>
 			
 			<if test="createTime != null and createTime !=''">
 				`createTime`= #{createTime},
 			</if>
 			
-			<if test="introduce != null and introduce !=''">
-				`introduce`= #{introduce},
-			</if>
-			
-			<if test="interview != null and interview !=''">
-				`interview`= #{interview},
-			</if>
-			
-			<if test="reward != null and reward !=''">
-				`reward`= #{reward},
+			<if test="context != null and context !=''">
+				`context`= #{context},
 			</if>
 			
 			<if test="uid != null and uid !=''">
 				`uid`= #{uid},
 			</if>
 			
-			<if test="deletestatus != null and deletestatus !=''">
-				`deletestatus`= #{deletestatus},
+			<if test="status != null and status !=''">
+				`status`= #{status},
 			</if>
 		</set>
 		 where `id`=#{id};
 	</update>
+	
+	<delete id="deleteTrain">
+		delete from Train where id=#{id};
+	</delete>
+	
 </mapper>

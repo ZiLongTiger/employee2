@@ -18,7 +18,10 @@ $(function(){
 		$("#show").empty();
 		$("#showOne").empty();
 		$("#showEmployee").empty();
+		$("#showSelfRecords").hide();
 		$("#btns").hide();
+		$("#divSalary").hide();
+		$("#showSelfBouns").hide();
 		var url = "${pageContext.request.contextPath}/user/showSelfMsg.do";
 		$.ajax({
 			   type: "POST",
@@ -48,6 +51,9 @@ $(function(){
 	$("a[name='showDepAndPos']").click(function(){
 		$("#showSelf").empty();
 		$("#btns").hide();
+		$("#divSalary").hide();
+		$("#showSelfRecords").hide();
+		$("#showSelfBouns").hide();
 		var url="${pageContext.request.contextPath}/user/showDepartMent.do";
 		$.ajax({
 			   type: "POST",
@@ -68,6 +74,7 @@ $(function(){
 			     $("a[name='showPostion']").click(function(){
 			    	 var url="${pageContext.request.contextPath}/user/showPostion.do";
 			    	 $("#showEmployee").empty();
+			    	 $("#divSalary").hide();
 			    	 var depName = $(this).text();
 			    	 $.ajax({
 			    		   type: "POST",
@@ -122,13 +129,16 @@ $(function(){
 			   }
 			});
 	});
-	
+	//打卡
 	$("a[name='card']").click(function(){
 		$("#show").empty();
 		$("#showOne").empty();
 		$("#showEmployee").empty();
 		$("#showSelf").empty();
+		$("#showSelfRecords").hide();
 		$("#btns").show();
+		$("#divSalary").hide();
+		$("#showSelfBouns").hide();
 		$.ajax({
 			 type: "POST",
 			 url: "${pageContext.request.contextPath}/user/goCheckClockIn.do",
@@ -219,6 +229,12 @@ $(function(){
 	});
 	
 	$("a[name='showReCords']").click(function(){
+		$("#show").empty();
+		$("#showOne").empty();
+		$("#showEmployee").empty();
+		$("#showSelf").empty();
+		$("#divSalary").hide();
+		$("#showSelfBouns").hide();
 		var url = "${pageContext.request.contextPath}/user/showSelfRecords.do";
 		$.ajax({
 			   type: "POST",
@@ -242,6 +258,125 @@ $(function(){
 		    	  $("#showSelfRecords").show();
 			   }
 			});
+	});
+	//查看已发放的工资
+	$("a[name='showSalary']").click(function(){
+		$("#show").empty();
+		$("#showOne").empty();
+		$("#showEmployee").empty();
+		$("#btns").hide();
+		$("#showSelf").empty();
+		$("#showSelfRecords").hide();
+		$("#showSelfBouns").hide();
+		var date = new Date();
+		var year = date.getFullYear();
+		var month = date.getMonth()+1;
+		var month= year+"-"+month;
+		var url = "${pageContext.request.contextPath}/user/showSelefSalary.do";
+		$.ajax({
+			type:"POST",
+			url:url,
+			dataType:"json",
+			success:function(msg){
+				if(msg[0] == "no"){
+					alert("你还没有薪资记录");
+				}else{
+					$("table[name='three'] tr:gt(0)").empty();
+					var trs = [];
+					$(msg).each(function(){
+						var tds = [];
+						tds.push("<td>" + this.month+ "</td>");
+						tds.push("<td>" + this.total+ "</td>");
+						tds.push("<td>" + this.baseWage + "</td>");
+						tds.push("<td>" + (this.total-this.baseWage+this.late+this.early+this.absenteeism-this.evection) + "</td>");
+						tds.push("<td>" + (this.late==0?"0":"-"+this.late) + "</td>");
+						tds.push("<td>" + (this.early==0?"0":"-"+this.early) + "</td>");
+						tds.push("<td>" + (this.absenteeism==0?"0":"-"+this.absenteeism) + "</td>");
+						tds.push("<td>" + this.evection + "</td>");
+						tds.push("<td><a name='salaryHasPro'>工资异议</a></td>");
+						var tr = "<tr>" + tds.join("") + "</tr>";
+						trs.push(tr);
+					});
+					$("table[name='three']").append(trs.join(""));
+		    		$("#divSalary").show();
+		    		
+		    		$("a[name='salaryHasPro']").click(function(){
+		    			$("#salaryPro").show();
+		    			var time = $(this).parent().prev().prev().prev().prev().prev().prev().prev().prev().text();
+		    		
+		    			$("input[name='suerThis']").click(function(){
+			    			var url="${pageContext.request.contextPath}/user/checkSalary.do";
+			    			var introduct = $("#introduct").val();
+			    			if(!introduct){
+			    				alert("请输入你的异议理由。");
+			    				return;
+			    			}
+			    			$.ajax({
+			    				type:"post",
+			    				url:url,
+			    				data:{introduct:introduct,time:time},
+			    				dataType:"text",
+			    				success:function(msg){
+			    					if(msg == "repeat"){
+			    						alert("你已经异议过了，请静候佳音。");
+			    					}else if(msg == "success"){
+			    						alert("你的异议请求已发送。");
+			    						$("#salaryPro").hide();
+			    					}else{
+			    						alert("你的异议请求发送失败。");
+			    					}
+			    				}
+			    			});
+			    		});
+		    		});
+				}
+			}
+		});
+	});
+	
+	$("input[name='coloseThis']").click(function(){
+		$("#salaryPro").hide();
+	});
+	
+	//查看我的奖惩
+	$("a[name='showBouns']").click(function(){
+		$("#show").empty();
+		$("#showOne").empty();
+		$("#showEmployee").empty();
+		$("#showSelfRecords").hide();
+		$("#btns").hide();
+		$("#divSalary").hide();
+		var url = "${pageContext.request.contextPath}/user/showSelfBouns.do";
+		$.ajax({
+			type:"POST",
+			url:url,
+			dataType:"json",
+			success:function(msg){
+				if(msg[0] == "no"){
+					alert("你还没有相关的奖惩记录。");
+				}else{
+					$("table[name='showBouns'] tr:gt(0)").empty();
+					var trs = [];
+					$(msg).each(function(){
+						var createTime = this.createTime;
+						var bonus = this.bonus;
+						var introduce = this.introduce;
+						var deletestatus = this.deletestatus;
+						var balance = this.balance;
+						var tds = [];
+						tds.push("<td>" + createTime + "</td>");
+						tds.push("<td>" + introduce + "</td>");
+						tds.push("<td>" + bonus + "</td>");
+						tds.push("<td>" + (deletestatus==0?"待处理":"已处理") + "</td>");
+						tds.push("<td>" + (balance==1?"奖励":balance==2?"惩罚":"") + "</td>");
+						var tr = "<tr>" + tds.join("") + "</tr>";
+						trs.push(tr);
+					});
+					$("table[name='showBouns']").append(trs.join(""));
+		    		$("#showSelfBouns").show();
+				}
+			}
+		});
 	});
 });
 
@@ -290,7 +425,7 @@ function clockIn(time,types){
 <a href="javascript:void(0)" name="selfMsg">查看个人信息</a>&nbsp;&nbsp;&nbsp;&nbsp;
 <a href="javascript:void(0)" name="showDepAndPos">部门职位</a>&nbsp;&nbsp;&nbsp;&nbsp;
 <a href="javascript:void(0)" name="showReCords">考勤记录</a>&nbsp;&nbsp;&nbsp;&nbsp;
-<!-- <a href="">培训</a>&nbsp; -->
+<a href="javascript:void(0)" name="messageTrain">培训通知</a>&nbsp;&nbsp;&nbsp;&nbsp;
 <a href="javascript:void(0)" name="showSalary">薪资</a>&nbsp;&nbsp;&nbsp;&nbsp;
 <a href="javascript:void(0)" name="showBouns">查看奖惩详情</a>
 </div>
@@ -302,6 +437,52 @@ function clockIn(time,types){
 			<th width="150px">打卡类型</th>
 		</tr>
 	</table>
+</div>
+
+<div id="showSelfBouns" style="display: none;">
+	<table border="1px" cellpadding="5px" cellspacing="0px" align="center" name="showBouns">
+		<tr>
+		 	<th width="150px">奖惩时间</th>
+			<th width="150px">奖惩原因</th>
+			<th width="150px">奖惩金额</th>
+			<th width="150px">是否处理</th>
+			<th width="150px">奖惩类型</th>
+		</tr>
+	</table>
+</div>
+
+<div id="divSalary" style="display: none;">
+	<table border='1px' cellpadding='5px' cellspacing='0px' align='center' name="three">
+		<tr>
+			<th width="120px">工资发放时间</th>
+			<th width="70px">总工资</th>
+			<th width="70px">基本薪资</th>
+			<th width="70px">奖惩总计</th>
+			<th width="70px">员工迟到</th>
+			<th width="70px">员工早退</th>
+			<th width="70px">员工旷工</th>
+			<th width="70px">社保</th>
+			<th width="70px">操作</th>
+		</tr>
+	</table>
+	
+	<div id="salaryPro" style="display: none;">
+		<table border="1px" cellpadding="5px" cellspacing="0px" align="center" width="400px">
+			<tr>
+				<td align="right">请输入异议理由：</td>
+				<td>
+					<textarea rows="5" cols="20" id="introduct" style="resize: none"></textarea>
+				</td>
+			</tr>
+			
+			<tr>
+				<td colspan="2" align="center">
+					<input type="button" name="suerThis" value="确认"/>&nbsp;&nbsp;&nbsp;
+					<input type="button" name="coloseThis" value="关闭"/>
+				</td>
+			</tr>
+		</table>
+	</div>
 </div>
 <div id="showOne"></div>
 <div id="show"></div>

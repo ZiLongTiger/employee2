@@ -430,15 +430,19 @@ $(function(){
 			});
 	});
 	
-	//查看本月员工工资详情
+	//查看上一月员工工资详情
 	$("a[name='salary']").click(function(){
 		$("#showRecords").hide();
 		var date = new Date();
 		var year = date.getFullYear();
-		var month = date.getMonth()+1;
+		var months = date.getMonth()+1;
 		var day = date.getDate();
 		var employeeId = $(this).prev().prev().prev().val();
-		var month= year+"-"+month;
+		if(months-1==0){
+			months=12;
+			year-=1;
+		}
+		var month= year+"-"+months;
 		var url = "${pageContext.request.contextPath}/admin/showEmploySalary.do";
 		$.ajax({
 			type:"POST",
@@ -459,7 +463,7 @@ $(function(){
 						$(bounsList).each(function(){
 							if(this.balance == 1){
 								bouns += this.bonus;
-							}else{
+							}else if(this.balance == 2){
 								bonus -= this.bonus;
 							}
 						});
@@ -467,24 +471,46 @@ $(function(){
 						var tds = [];
 						tds.push("<td>" + salary.baseWage + "</td>");
 						tds.push("<td>" + bouns + "</td>");
-						tds.push("<td>" + "-"+salary.late + "</td>");
-						tds.push("<td>" + "-"+salary.early + "</td>");
-						tds.push("<td>" + "-"+salary.absenteeism + "</td>");
+						tds.push("<td>" + (salary.late==0?"0":"-"+salary.late) + "</td>");
+						tds.push("<td>" + (salary.early==0?"0":"-"+salary.early) + "</td>");
+						tds.push("<td>" + (salary.absenteeism==0?"0":"-"+salary.absenteeism) + "</td>");
 						tds.push("<td>" + salary.evection + "</td>");
 						tds.push("<td>" + (salary.baseWage+bouns-salary.late-salary.early-salary.absenteeism+salary.evection)+ "</td>");
-						tds.push("<td><a name='endSalary'>工资发放</a></td>");
+						tds.push("<td><input type='hidden' value='"+employee.id+"'/><a name='endSalary'>工资发放</a></td>");
 						var tr = "<tr>" + tds.join("") + "</tr>";
 						trs.push(tr);
 					});
 					$("table[name='three']").append(trs.join(""));
 		    		$("#divSalary").show();
 		    		$("a[name='endSalary']").click(function(){
-		    			if(day < 10){
-		    				alert("每个月的10号发放工资，现在还没到工资方法的日期。");
-		    			}else if(day>10){
-		    				alert("每个月的10号发放工资，已经过了发放工资方法的日期。");
+		    			var empId = $(this).prev().val();
+		    			var total = $(this).parent().prev().text();
+		    			if(day < 12){
+		    				alert("每个月的12号发放前一个月的工资，现在还没到工资方法的日期。");
+		    			}else if(day>12){
+		    				alert("每个月的12号发放前一个月的工资，已经过了发放工资方法的日期。");
 		    			}else{
 		    				//工资结算
+		    				var url = "${pageContext.request.contextPath}/admin/endSalary.do";
+		    				if(months-1==0){
+			    				months=12;
+			    				year-=1;
+			    			}
+		    				month = year+"-"+months;
+		    				$.ajax({
+		    					type:"POST",
+		    					url:url,
+		    					data:{empId:empId,month:month,total:total},
+		    					success:function(msg){
+		    						if(msg == "success"){
+		    							alert("工资发放成功");
+		    						}else if(msg == "success"){
+		    							alert("工资发放失败");
+		    						}else{
+		    							alert("工资已结算，请勿重复发放");
+		    						}
+		    					}
+		    				});
 		    			}
 		    		});
 				}
@@ -535,11 +561,11 @@ $(function(){
 					<td width="100px">${emp.postion.posName}</td>
 					<td width="150px">${emp.record}</td>
 					<td width="80px">${emp.status==0?'试用期 ':emp.status == 1?'正式员工':'离职员工'}</td>
-					<td width="230px">
+					<td width="260px">
 						<input type="hidden" value="${emp.id}" />
 						<a href="javascript:void(0)" name="delEmpl">开除员工</a>&nbsp;&nbsp;
 						<a href="javascript:void(0)" name="emRecords">考勤</a>&nbsp;&nbsp;
-						<a href="javascript:void(0)" name="salary">查看本月员工工资</a>&nbsp;&nbsp;
+						<a href="javascript:void(0)" name="salary">查看上一月员工工资</a>&nbsp;&nbsp;
 				 		<a href="javascript:void(0)" name="emplPosDep">职位调动</a>
 					</td>
 				</tr>

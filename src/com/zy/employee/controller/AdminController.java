@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSON;
 import com.zy.employee.entity.Bonus;
+import com.zy.employee.entity.CheckBonus;
 import com.zy.employee.entity.Curriculumvitae;
 import com.zy.employee.entity.Department;
 import com.zy.employee.entity.EmDepPos;
@@ -29,6 +30,7 @@ import com.zy.employee.entity.Records;
 import com.zy.employee.entity.Recruit;
 import com.zy.employee.entity.Salary;
 import com.zy.employee.entity.SalaryEnd;
+import com.zy.employee.entity.Train;
 import com.zy.employee.entity.User;
 import com.zy.employee.service.BonusService;
 import com.zy.employee.service.CurriculumvitaeService;
@@ -39,6 +41,7 @@ import com.zy.employee.service.PostionService;
 import com.zy.employee.service.RecordsService;
 import com.zy.employee.service.RecruitService;
 import com.zy.employee.service.SalaryService;
+import com.zy.employee.service.TrainService;
 import com.zy.employee.service.UserService;
 
 @Controller("adminController")
@@ -74,6 +77,9 @@ public class AdminController {
 	
 	@Autowired
 	private BonusService bonusService;
+	
+	@Autowired
+	private TrainService trainService;
 	
 	//用来储存登录账号
 	private static User loginUser = null;
@@ -536,7 +542,7 @@ public class AdminController {
 		}
 		return "error";
 	}
-	
+	//查看所有员工
 	@RequestMapping("queryAllEmployee.do")
 	public String queryAllEmployee(Model model) {
 		List<Employee> list = employeeService.getAllEmployee();
@@ -558,7 +564,7 @@ public class AdminController {
 	public String delEmpl(HttpServletRequest req) {
 		int id = Integer.valueOf(req.getParameter("id"));
 		Employee employee = employeeService.getByEmployeeId(id);
-		employee.setStatus(3);
+		employee.setStatus(3);//3员工开除
 		int res = employeeService.updateEmployee(employee);
 		if(res>0) {
 			User user = userService.getUserById(employee.getUid());
@@ -584,7 +590,7 @@ public class AdminController {
 		Object json = JSON.toJSON(list);
 		return "" + json;
 	}
-	
+	//员工职位调动
 	@RequestMapping("empChangeDP.do")
 	@ResponseBody
 	public String empChangeDP(HttpServletRequest req) {
@@ -642,7 +648,153 @@ public class AdminController {
 	@RequestMapping("endSalary.do")
 	@ResponseBody
 	public String salaryGo(HttpServletRequest req) {
-		return "";
+		int employeeId = Integer.parseInt(req.getParameter("empId"));
+		String month = req.getParameter("month");
+		double total = Double.parseDouble(req.getParameter("total"));
+		Employee emp = employeeService.getByEmployeeId(employeeId);
+		Salary salary = salaryService.getSalaryByMonthAndUid(emp.getUid(), month);
+		if(salary.getStatus() == 1) {
+			return "repeat";
+		}
+		salary.setStatus(1);
+		salary.setTotal(total);
+		int res = salaryService.updateSalary(salary);
+		if(res>0) {
+			List<Bonus> list = bonusService.getByBonusUidAndReward(emp.getUid(), month);
+			if(list.size()>0) {
+				for (Bonus bonus : list) {
+					bonus.setDeletestatus(1);
+					bonusService.updateBonus(bonus);
+				}
+			}
+			return "success";
+		}
+		return "error";
+	}
+	//查看工资异议信息
+	@RequestMapping("checkSalayBouns.do")
+	@ResponseBody
+	public String checkSalayBouns() {
+		List<Bonus> allBonus = bonusService.getAllBonus();
+		if(allBonus.size() > 0) {
+			List<CheckBonus>newAllBonus = new ArrayList<CheckBonus>();
+			for (Bonus bonus : allBonus) {
+				if(bonus.getBalance() == 3 && bonus.getDeletestatus() == 0) {
+					Employee employee = employeeService.getByEmployeeByUid(bonus.getUid());
+					newAllBonus.add(new CheckBonus(employee, bonus));
+				}
+			}
+			if(newAllBonus.size() > 0) {
+				Object json = JSON.toJSON(newAllBonus);
+				return ""+json;
+			}else {
+				List<String>list = new ArrayList<String>();
+				list.add("no");
+				Object json = JSON.toJSON(list);
+				return ""+json;
+			}
+		}else {
+			List<String>list = new ArrayList<String>();
+			list.add("no");
+			Object json = JSON.toJSON(list);
+			return ""+json;
+		}
 	}
 	
+	//驳回员工的异议
+	@RequestMapping("noBonus.do")
+	@ResponseBody
+	public String noBonus(HttpServletRequest req) {
+		int bonusId = Integer.parseInt(req.getParameter("bonusId"));
+		Bonus bonus = bonusService.getByBonusId(bonusId);
+		if(bonus.getDeletestatus() == 1) {
+			return "repeat";
+		}
+		bonus.setDeletestatus(1);
+		int res = bonusService.updateBonus(bonus);
+		if(res>0) {
+			return "success";
+		}
+		return "error";
+	}
+	
+	//奖励员工
+	@RequestMapping("isBonus.do")
+	@ResponseBody
+	public String isBonus(HttpServletRequest req) {
+		int id = Integer.parseInt(req.getParameter("bonusId"));
+		Bonus byIdBonus = bonusService.getByBonusId(id);
+		double bonus = Double.parseDouble(req.getParameter("bonus"));
+		String introduce = req.getParameter("introduct");
+		String reward = req.getParameter("month");
+		String createTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+		Bonus bonus2 = new Bonus(bonus, createTime, introduce, reward, byIdBonus.getUid(), 0, 1);
+		int res = bonusService.saveBonus(bonus2);
+		if(res > 0) {
+			byIdBonus.setDeletestatus(1);
+			bonusService.updateBonus(byIdBonus);
+			return "success";
+		}
+		return "error";
+	}
+	
+	//奖励员工
+	@RequestMapping("isNotBonus.do")
+	@ResponseBody
+	public String isNotBonus(HttpServletRequest req) {
+		int id = Integer.parseInt(req.getParameter("bonusId"));
+		Bonus byIdBonus = bonusService.getByBonusId(id);
+		double bonus = Double.parseDouble(req.getParameter("bonus"));
+		String introduce = req.getParameter("introduct");
+		String reward = req.getParameter("month");
+		String createTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+		Bonus bonus2 = new Bonus(bonus, createTime, introduce, reward, byIdBonus.getUid(), 0, 1);
+		int res = bonusService.saveBonus(bonus2);
+		if(res > 0) {
+			byIdBonus.setDeletestatus(1);
+			bonusService.updateBonus(byIdBonus);
+			return "success";
+		}
+		return "error";
+	}
+	
+	//查看培训标题是否存在
+	@RequestMapping("checkTrainTile.do")
+	@ResponseBody
+	public String checkTrainTile(HttpServletRequest req) throws IOException {
+		req.setCharacterEncoding("utf-8");
+		String title = req.getParameter("title");
+		System.out.println(title);
+		Train train = trainService.getByTitle(title);
+		if(train != null) {
+			return "error";
+		}
+		return "success";
+	}
+	//员工培训显示所有在职员工
+	@RequestMapping("showEmployeeAll.do")
+	@ResponseBody
+	public String showEmployeeAll() {
+		List<Employee> list = employeeService.getAllEmployee();
+		if(list == null) {
+			List<String>slist = new ArrayList<String>();
+			slist.add("no");
+			Object json = JSON.toJSON(slist);
+			return ""+json;
+		}else {
+			List<Employee2> listEmpl = new ArrayList<Employee2>();
+			for (Employee employee : list) {
+				if(employee.getStatus() != 2 || employee.getStatus() != 3) {
+					Postion postion = postionService.getById(employee.getPosId());
+					Department dept = departmentService.getByDepId(employee.getDepId());
+					User user = userService.getUserById(employee.getUid());
+					Employee2 emp = new Employee2(employee.getId(),employee.getRealName(), employee.getEmail(), employee.getPhone(),
+							dept, postion, user, null, employee.getRecord(), employee.getStatus());
+					listEmpl.add(emp);
+				}
+			}
+			Object json = JSON.toJSON(listEmpl);
+			return ""+json;
+		}
+	}
 }

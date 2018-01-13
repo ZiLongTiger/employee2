@@ -1,33 +1,17 @@
 package com.zy.employee.entity;
-
 public class Train{
 
 	private int id;
 	
-	private String title;
+	private String title;//培训标题
 	
-	private String createTime;
+	private String createTime;//该培训的创建时间
 	
-	private String context;
-
-	public Train() {
-		super();
-	}
-
-	public Train(int id, String title, String createTime, String context) {
-		super();
-		this.id = id;
-		this.title = title;
-		this.createTime = createTime;
-		this.context = context;
-	}
-
-	public Train(String title, String createTime, String context) {
-		super();
-		this.title = title;
-		this.createTime = createTime;
-		this.context = context;
-	}
+	private String context;//培训内容
+	
+	private int uid;
+	
+	private int status;//0 未查看  1已查看 
 
 	public int getId() {
 		return id;
@@ -61,8 +45,42 @@ public class Train{
 		this.context = context;
 	}
 
-	@Override
-	public String toString() {
-		return "Train [id=" + id + ", title=" + title + ", createTime=" + createTime + ", context=" + context + "]";
+	public int getUid() {
+		return uid;
+	}
+
+	public void setUid(int uid) {
+		this.uid = uid;
+	}
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
+	}
+
+	public Train(int id, String title, String createTime, String context, int uid, int status) {
+		super();
+		this.id = id;
+		this.title = title;
+		this.createTime = createTime;
+		this.context = context;
+		this.uid = uid;
+		this.status = status;
+	}
+
+	public Train(String title, String createTime, String context, int uid, int status) {
+		super();
+		this.title = title;
+		this.createTime = createTime;
+		this.context = context;
+		this.uid = uid;
+		this.status = status;
+	}
+
+	public Train() {
+		super();
 	}
 }

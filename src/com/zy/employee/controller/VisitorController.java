@@ -35,6 +35,7 @@ import com.zy.employee.service.PostionService;
 import com.zy.employee.service.RecordsService;
 import com.zy.employee.service.RecruitService;
 import com.zy.employee.service.SalaryService;
+import com.zy.employee.service.TrainService;
 import com.zy.employee.service.UserService;
 
 @Controller("visitorController")
@@ -70,6 +71,9 @@ public class VisitorController {
 	
 	@Autowired
 	private BonusService bonusService;
+	
+	@Autowired
+	private TrainService trainService;
 	
 	private static User login_user = null;
 	
@@ -551,10 +555,73 @@ public class VisitorController {
 		return ""+json;
 	}
 	
+	//员工查看自己的薪资
+	@RequestMapping("showSelefSalary.do")
+	@ResponseBody
+	public String showSelefSalary() {
+		List<Salary> list = salaryService.getEmployeeSalary(login_user.getId());
+		List<Salary> newList = new ArrayList<Salary>();
+		for (Salary salary : list) {
+			if(salary.getStatus() == 1) {
+				newList.add(salary);
+			}
+		}
+		if(newList.size() > 0) {
+			Object json = JSON.toJSON(newList);
+			return ""+json;
+		}else {
+			List<String>list2 = new ArrayList<String>();
+			list2.add("no");
+			Object json = JSON.toJSON(list2);
+			return ""+json;
+		}
+	}
+	//工资异议
+	@RequestMapping("checkSalary.do")
+	@ResponseBody
+	public String checkSalary(HttpServletRequest req) {
+		String introduce = req.getParameter("introduct");
+		String nowTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+		String reward = req.getParameter("time");
+		List<Bonus> list = bonusService.getByBonusUidAndReward(login_user.getId(), reward);
+		for (Bonus bonus : list) {
+			if(bonus.getBalance()==3) {
+				return "repeat";
+			}
+		}
+		int res = bonusService.saveBonus(new Bonus(0, nowTime, introduce, reward, login_user.getId(), 0, 3));
+		if(res > 0) {
+			return "success";
+		}
+		return "error";
+	}
+	
 	//用户退出
 	@RequestMapping("exit.do")
 	public String exit() {
 		login_user = null;
 		return "redirect:userGo.do";
+	}
+	
+	//查看自己的奖惩信息
+	@RequestMapping("showSelfBouns.do")
+	@ResponseBody
+	public String showSelfBouns() {
+		List<Bonus> bonusByUid = bonusService.getBonusByUid(login_user.getId());
+		if(bonusByUid != null) {
+			List<Bonus> list = new ArrayList<Bonus>();
+			for (Bonus bonus : bonusByUid) {
+				if(bonus.getBalance() != 3) {
+					list.add(bonus);
+				}
+			}
+			Object json = JSON.toJSON(list);
+			return ""+json;
+		}else {
+			List<String>list = new ArrayList<String>();
+			list.add("no");
+			Object json = JSON.toJSON(list);
+			return ""+json;
+		}
 	}
 }

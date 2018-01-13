@@ -17,8 +17,7 @@ public class BonusServiceImpl implements BonusService {
 	
 	@Override
 	public List<Bonus> getAllBonus() {
-		// TODO Auto-generated method stub
-		return null;
+		return bonusMapper.getAllBonus();
 	}
 
 	@Override
@@ -39,6 +38,11 @@ public class BonusServiceImpl implements BonusService {
 	@Override
 	public List<Bonus> getByBonusUidAndReward(int uid, String reward) {
 		return bonusMapper.getByBonusUidAndReward(uid, reward);
+	}
+
+	@Override
+	public List<Bonus> getBonusByUid(int uid) {
+		return bonusMapper.getBonusByUid(uid);
 	}
 
 }

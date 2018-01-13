@@ -10,6 +10,8 @@ public interface BonusService {
 
 	public List<Bonus> getAllBonus();
 	
+	public List<Bonus> getBonusByUid(int uid);
+	
 	public Bonus getByBonusId(int id);
 	
 	public List<Bonus> getByBonusUidAndReward(@Param(value="uid")int uid,@Param(value="reward")String reward);
